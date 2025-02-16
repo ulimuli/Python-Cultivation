@@ -82,6 +82,7 @@ class Game():
                     self.otu = 1
 
             game.control()
+
         nsc = ["1 Heavenly Sword Sect","2 Demonic Blood Sect","3 Mystic Lotus Sect"] #names of the sects
         print("")
         for sect in nsc:
