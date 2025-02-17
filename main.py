@@ -22,8 +22,30 @@ class Game():
         self.rw25 = int(0)
         self.rw50 = int(0)
         self.rw100 = int(0)
+        self.gs = None #geschlecht
+        self.nm = None #name
 
+    def start(self):
+        print("You open your eyes to a world with vast towering mountains,"
+              " their peaks covered in mist, stretch endlessly into the heavens."
+              " The air is filled with Qi, an unseen force that allows you to cultivate.")
+        print("")
+        print("What is your name in this vast world")
+        self.nm = input("Name: ")
+        print("What is your gender?")
+        print("")
+        print("Man or Women?")
+        cd = input("Gender:")
+        if cd == "Man":
+            self.gs = "Man"
+        elif cd == "Women":
+            self.gs = "Women"
+        else: "That is not a valid Gender please try again.", game.start()
+        print(f"You are {self.nm} and you are a {self.gs}")
+        game.control()
 
+    def secret_tech(self):
+        pass
     def sects(self):
         if self.psc != None:
             if self.otu == 1:
@@ -138,8 +160,8 @@ class Game():
             print("")
             print("What do you want to do?")
             print("")
-            print("1 Visit a place")
-            print("2 let time pass")
+            print("1 Go to a place")
+            print("2 Cultivate")
             print("3 try to reach a new realm")
             if self.psc == None:
                 print("4 join a sect")
@@ -155,33 +177,69 @@ class Game():
                 print("")
                 print("You can visit:")
                 print("")
-                print("1 the village")
-                print("2 the mine")
-                print("3 sect middle")
-                print("4 a goldy artifact")
-                print("5 back")
+                print("1 random Place")
+                print("2 the village")
+                if self.rwsi > 25:
+                    print("3 sect middle")
+                if self.rwsi >= 100:
+                    print("4 a goldy artifact")
                 c = int(input("Choice:"))
+                event = random.random()
+                print(event)
                 if c == 1:
-                    self.location = "village"
+                    self.location = "random Place"
                     self.bls += q
 
                 elif c == 2:
-                    self.location = "mine"
+                    self.location = "Village"
                     self.bls += w
+                    if event > 0.75:
+                        k = random.random()
+                        if k <= 0.5:
+                            print("The village is getting attacked currently do you want to help?")
+                            print("")
+                            print("Yes or No?")
+                            l = input("Choice:")
+                            if l == "Yes":
+                                r = random.random()
+                                if r <= 0.5:
+                                    "You helped kill the bands and the villager thanked you"
+                                else: print("You were unable to do anything against the bandits, but they let you be")
+                            elif l == "No":
+                                print("You leave the village alone,"
+                                      " when you came back 1 hour later the village was in ruin and on fire")
+                            else: print("Not a valid option,"
+                                        " please be careful while writing and also look if you write in caps"), game.control()
+
+                        elif k > 0.5:
+                            print("The village is currently holding a celebration do you wish to join?")
+                            print("")
+                            print("Yes or No?")
+                            o = input("Choice:")
+                            if o == "Yes":
+                                print("You had much fun with the villagers and celebrated deep into the night")
+                            elif o == "No":
+                                print("You ignored the celebration and continue with your work alone")
+                            else: print("Not a valid option,"
+                                        " please be careful while writing and also look if you write in caps"), game.control()
+                    else: print("Nothing is currently happening in the village.")
+
+
+
                 elif c == 3:
                     self.location = "sect middle"
                     self.bls += e
                 elif c == 4:
                     self.location = "a godly artifact"
                     self.bls += r
-                elif c == 5:
-                    game.control()
+                else: game.control()
+
             elif d == 2:
-                print("How long do you want time to pass?")
+                print("How long do you want to cultivate?")
                 print("")
-                print("10 days")
-                print("50 days")
-                print("100 days")
+                print("1 10 days")
+                print("2 50 days")
+                print("3 100 days")
                 z = int(input("Choice:"))
                 if z == 1:
                     self.ct = 10
@@ -214,4 +272,4 @@ class Game():
 
 
 game = Game()
-game.control()
+game.start()
