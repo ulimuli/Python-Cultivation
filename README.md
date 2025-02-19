@@ -1,3 +1,13 @@
-This is basicly a cultivation game i made. it is purely text based. You can choose where you want to go to cultivate then you can cultivate of course and lastly you can advance in your realm there are currently 6 mayor realms and each time you make progress the required xp needed for upgrading gets more.
+Python-Cultivation
 
-If you have any improvement ideas i would love to here them and try to add them to this project.
+This is a text-based cultivation game inspired by cultivation novels set in ancient China.
+
+Features:
+
+Join Sects – Become part of a sect and improve your relations to earn cultivation rewards.
+
+Explore the World – Visit different locations and experience random events.
+
+Advance Your Cultivation – Progress through cultivation realms up to Void Refinement, the highest realm currently available. Advancing requires 45 upgrades, with each step becoming progressively harder.
+
+Cultivate – Train and grow stronger in the path of cultivation.
