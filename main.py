@@ -1,6 +1,7 @@
 import random
 import time
-
+import tkinter as tk
+from tkinter import ttk
 
 class Game():
     def __init__(self):
@@ -22,9 +23,58 @@ class Game():
         self.rw25 = int(0)
         self.rw50 = int(0)
         self.rw100 = int(0)
-        self.gs = None #geschlecht
+        self.gs = None #gender
         self.nm = None #name
+        self.cp = int(0) #combat power
 
+    def combat(self):
+        lwp = self.cp - 50
+        hwp = self.cp + 50
+        print(f"You are currently have a combat power of {self.cp}")
+        print("Who do you want to fight with?")
+        print("")
+        nl = ["Mo Tianxie","Xie Wuhen","Bai Mingsheng","Guo Zhenhai",
+              "Hei Wulian","Zhao Tiansha","Feng Luoxian","Yan Wujian","Du Chengkong","Luo Hengzhi"] #list bad guys
+        e1 = random.randrange(lwp,hwp)
+        e2 = random.randrange(lwp,hwp)
+        e3 = random.randrange(lwp,hwp)
+        e4 = random.randrange(lwp,hwp)
+        e5 = random.randrange(lwp,hwp)
+
+        print(f"1 {random.choice(nl)} Combat Power: {e1}")
+        print(f"2 {random.choice(nl)} Combat Power: {e2}")
+        print(f"3 {random.choice(nl)} Combat Power: {e3}")
+        print(f"4 {random.choice(nl)} Combat Power: {e4}")
+        print(f"5 {random.choice(nl)} Combat Power: {e5}")
+        c = int(input("Choice:"))
+        if c == 1:
+            if e1 < self.cp:
+                print("You won against your enemy")
+            else: print("You lost but you were able to survive")
+        elif c == 2:
+            if e2 < self.cp:
+                print("You won against your enemy")
+            else: print("You lost but you were able to survive")
+        elif c ==3:
+            if e3 < self.cp:
+                print("You won against your enemy")
+            else: print("You lost but you were able to survive")
+        elif c == 4:
+            if e4 < self.cp:
+                print("You won against your enemy")
+            else: print("You lost but you were able to survive")
+        elif c == 5:
+            if e5 < self.cp:
+                print("You won against your enemy")
+            else: print("You lost but you were able to survive")
+    def window(self):
+        root = tk.Tk()
+        root.geometry("700x500")
+        root.title("Python-Cultivation")
+        root.grid()
+        tinput = tk.Text(root, height=5,)
+        tinput.grid(row=6, column=4)
+        root.mainloop()
     def start(self):
         print("You open your eyes to a world with vast towering mountains,"
               " their peaks covered in mist, stretch endlessly into the heavens."
@@ -154,6 +204,7 @@ class Game():
 
     def control(self):
         q,w,e,r = game.places()
+        self.cp = self.rea * 100
         while True:
             acr = self.cr * self.rea # required
             self.acr = acr
@@ -167,6 +218,7 @@ class Game():
                 print("4 join a sect")
             elif self.otu < 1:
                 print(f"4 Improve relations with {self.psc}")
+            print("5 fight")
             print("")
             print(f"Your cultivation is {self.rsn} in the {self.step} realm")
             print(f"Cultivation Xp: {self.cue}")
@@ -185,7 +237,6 @@ class Game():
                     print("4 a goldy artifact")
                 c = int(input("Choice:"))
                 event = random.random()
-                print(event)
                 if c == 1:
                     self.location = "random Place"
                     self.bls += q
@@ -254,6 +305,8 @@ class Game():
                 game.realms()
             elif d == 4:
                 game.sects()
+            elif d == 5:
+                game.combat()
     def time(self):
 
         print(self.ct)
@@ -272,4 +325,4 @@ class Game():
 
 
 game = Game()
-game.start()
+game.control()
