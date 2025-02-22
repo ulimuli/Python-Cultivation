@@ -11,3 +11,5 @@ Explore the World – Visit different locations and experience random events.
 Advance Your Cultivation – Progress through cultivation realms up to Void Refinement, the highest realm currently available. Advancing requires 45 upgrades, with each step becoming progressively harder.
 
 Cultivate – Train and grow stronger in the path of cultivation.
+
+Simple Combat- Fight against 1 of 5 enemys and try to win with a higher combat power
