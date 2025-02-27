@@ -26,6 +26,12 @@ class Game():
         self.gs = None #gender
         self.nm = None #name
         self.cp = int(0) #combat power
+        self.sps = int(10) #size of the spirit sea
+        self.qq = int(1) #quality of Qi
+        self.pc = int(0) # percent of finishing the Core
+        self.ins = int(0) # size of the nascent soul
+        self.exd = int(0) #domain size
+        self.dac = int(0) #percent of connection with dao
 
     def combat(self):
         lwp = self.cp - 50
@@ -213,16 +219,41 @@ class Game():
             print("")
             print("1 Go to a place")
             print("2 Cultivate")
-            print("3 try to reach a new realm")
+            print("3 try to break through")
             if self.psc == None:
                 print("4 join a sect")
             elif self.otu < 1:
                 print(f"4 Improve relations with {self.psc}")
             print("5 fight")
+            if self.step == "Qi Gathering":
+                print("6 improve Spirit Sea")
+                self.cp += self.sps
+                ch6 = 1 # just means that the realm is this and is used for the choice thing
+            elif self.step == "Foundation Establishment":
+                print("6 improve quality of Qi")
+                self.cp *= self.qq / 100
+                ch6 = 2
+            elif self.step == "Core Formation":
+                print("6 Condense Core")
+                self.cp *= self.pc
+                ch6 = 3
+            elif self.step == "Nascent Soul":
+                print("6 Improve Nascent Soul")
+                self.cp += self.ins * 1000
+                ch6 = 4
+            elif self.step == "Soul Formation":
+                print("6 expand your domain")
+                self.cp *= self.exd
+                ch6 = 5
+            elif self.step == "Void Refinement":
+                print("6 improve Dao Connection")
+                self.cp *= self.dac
+                ch6 = 6
             print("")
             print(f"Your cultivation is {self.rsn} in the {self.step} realm")
             print(f"Cultivation Xp: {self.cue}")
             print(f"required for next level: {self.acr}")
+            print(f"Your Combat Power is {self.cp}")
             d = int(input("Choice:"))
 
             if d == 1:
@@ -307,6 +338,52 @@ class Game():
                 game.sects()
             elif d == 5:
                 game.combat()
+            elif d == 6:
+                sc = random.randrange(10, 50)
+                qi = sc / 10
+                if ch6 == 1:
+                    self.sps += sc
+                    print(f"improved your spirit sea by {sc} your spirit sea now has a size of {self.sps}")
+                elif ch6 == 2:
+                    if self.qq == 100:
+                        print("You already have the purest Qi")
+                    elif self.qq < 100:
+                        self.qq += qi
+                        print(f"Your Qi quality improved by {qi} and now has a purity of {self.qq}%")
+                        if self.qq >= 100:
+                            print("You reached the maximum purity of your Qi")
+                            self.qq = 100
+                elif ch6 == 3:
+                    if self.pc >= 100:
+                        print("You already completed your core")
+                    elif self.pc < 100:
+                        self.pc += qi
+                        print(f"Your Core has improved by {qi} and now is to {self.pc} completed")
+                        if self.pc >= 100:
+                            print("You completed your core")
+                            self.pc = 100
+                elif ch6 == 4:
+                    self.ins += sc
+                    print(f"The size of your Nascent Soul increased by {sc} meter"
+                          f" and has now reached a height of {self.ins} meter")
+                elif ch6 == 5:
+                    self.exd += sc
+                    print(f"The size of your domain increased by {sc} meter"
+                          f"and has now reached a size of {self.exd} meter")
+                elif ch6 == 6:
+                    self.dac += qi
+                    print(f"Your connection with the dao increased by {qi} "
+                          f"and has now reached a connection of {self.dac}%")
+                    if self.dac >= 100:
+                        print("You reached the dao and are now an immortal")
+                        print("")
+                        print("I hope you liked my game")
+                        break
+
+
+
+
+
     def time(self):
 
         print(self.ct)
@@ -325,4 +402,4 @@ class Game():
 
 
 game = Game()
-game.control()
+game.start()
