@@ -13,3 +13,5 @@ Advance Your Cultivation – Progress through cultivation realms up to Void Refi
 Cultivate – Train and grow stronger in the path of cultivation.
 
 Simple Combat- Fight against 1 of 5 enemys and try to win with a higher combat power
+
+Increase the size of your Qi, increase its Quality, build a core, increase the size of your nascent soul, expand your own domain and finally reach the connection with the dao
