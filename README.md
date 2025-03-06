@@ -17,3 +17,5 @@ Simple Combat- Fight against 1 of 5 enemys and try to win with a higher combat p
 Increase your Combat Power by reaching a higher cultivation realm or by improving your realm exclusive activities
 
 Increase the size of your Qi, increase its Quality, build a core, increase the size of your nascent soul, expand your own domain and finally reach the connection with the dao
+
+Includes a GUI
