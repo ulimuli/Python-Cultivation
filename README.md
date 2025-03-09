@@ -19,3 +19,5 @@ Increase your Combat Power by reaching a higher cultivation realm or by improvin
 Increase the size of your Qi, increase its Quality, build a core, increase the size of your nascent soul, expand your own domain and finally reach the connection with the dao
 
 Includes interactive gui which is mostly usable via button clicks for now sadly
+
+As of currently there is a small bug with the gui. I am not sure what cases this but as it seems on windows the text field is bigger then on my mac i use. I will try to fix this bug as soon as possible.
