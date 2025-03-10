@@ -2,7 +2,6 @@ import random
 import sys
 import time
 import tkinter as tk
-from tkinter import ttk, INSERT
 
 
 class Game():
@@ -37,8 +36,12 @@ class Game():
         self.dac = int(0) #percent of connection with dao
         self.uip = None
         self.pr = 0
+        self.bt1 = 0
+        self.bt2 = 0
         self.bt3 = 0
         self.bt4 = 0
+        self.sr = 0 #sect rank
+        self.rp = int(0) #reputation in sect
     def uin(self):
         self.uip = self.inp.get()
         self.inp.delete(0, tk.END)
@@ -46,9 +49,21 @@ class Game():
             self.pr += 1
             game.start()
     def combat(self):
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 2:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
         lwp = self.cp - 50
         hwp = self.cp + 50
-        print(f"You are currently have a combat power of {self.cp}\n")
         self.output.insert(tk.END,"Who do you want to fight with?\n")
         self.output.insert(tk.END,"\n")
         nl = ["Mo Tianxie","Xie Wuhen","Bai Mingsheng","Guo Zhenhai",
@@ -82,6 +97,7 @@ class Game():
                     if e1 < self.cp:
                         self.output.insert(tk.END,"You won against your enemy\n")
                     else: self.output.insert(tk.END,"You lost but you were able to survive\n")
+                    self.bt1 += 1
 
                     for bt in [self.butt1, self.butt2, self.butt3, self.butt4]:
                         try:
@@ -94,6 +110,7 @@ class Game():
             if e2 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
+            self.bt2 += 1
             for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
                 try:
                     bt.destroy()
@@ -104,6 +121,7 @@ class Game():
             if e3 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
+            self.bt3 += 1
 
             for bt in [self.butt1, self.butt2, self.butt3, self.butt4]:
                 try:
@@ -115,6 +133,7 @@ class Game():
             if e4 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
+            self.bt4 += 1
             for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
                 try:
                     bt.destroy()
@@ -137,7 +156,7 @@ class Game():
         self.but1 = tk.Button(self.root, height=2, width=4,text="Travel",command=lambda: game.travel(0,0))
         self.but1.place(x=559,y=0)
 
-        self.but2 = tk.Button(self.root,height=2,width=4,text="Sect",command=game.sects)
+        self.but2 = tk.Button(self.root,height=2,width=4,text="Sect",command=lambda: game.sects(0))
         self.but2.place(x=629,y=0)
 
         self.but3 = tk.Button(self.root,height=2,width=4,text="Fight",command=game.combat)
@@ -221,74 +240,25 @@ class Game():
 
 
 
-    def secret_tech(self):
-        pass
-    def sects(self):
-        if self.psc != None:
-            if self.otu == 1:
-                self.output.insert(tk.END,"You already reached max relations with your sect\n")
-            ri = random.randrange(5,20)
-            self.rwsi += ri
-            self.output.insert(tk.END,f"You were able to improve your relation with {self.psc} to {self.rwsi}\n")
-            if 1 <= self.rwsi < 25:
-                self.output.insert(tk.END,f"If you reach 25 relations with {self.psc} you will be able to reach a new cultivation level\n")
-            elif 25 <= self.rwsi < 50:
-                if self.rw25 == 1:
-                    self.output.insert(tk.END,"If you are able to reach 50 relations a wise elder will teach you\n")
-                else:
-                    self.output.insert(tk.END,"Congratulation you reached relations up to 25.\n"
-                          " You are getting toughed by a new elder and you try to reach a new cultivation level\n")
-                    self.rw25 = 1
 
-                    if self.rsn == 9:
-                        self.output.insert(tk.END,f"As you are currently in the peek of {self.step}\n"
-                              f" the elder was not able to help you break through but you got 1000 cultivation xp\n")
-                        self.cue += 1000
-                        self.kph.config(text=f"Cultivation Xp: {self.cue}")
-                    else:
-                        self.rea += 1
-                        self.rsn += 1
-                        self.output.insert(tk.END,"You were able to reach a new cultivation level\n")
-                        self.drc.config(text=f"{self.rsn} level of \n{self.step} realm")
-            elif 50 <= self.rwsi <100:
-                if self.rw50 == 1:
-                    self.output.insert(tk.END,"If you reach 100 relations the sect master will teach you personally\n")
-                else:
-                    self.output.insert(tk.END,"Fabulous you reached 50 relations.\n"
-                          " A wise elder guided you on your way and you broke through 2 cultivation levels.\n")
-                    self.rw50 = 1
-                    if self.rsn >= 8:
-                        self.output.insert(tk.END,f"As you are currently in the {self.rsn} of {self.step}\n"
-                              f" the elder was not able to help you break through but you got 2500 cultivation xp")
-                        self.cue += 2500
-                        self.kph.config(text=f"Cultivation Xp: {self.cue}")
-                    else:
-                        self.rea += 2
-                        self.rsn += 2
-                        self.drc.config(text=f"{self.rsn} level of \n{self.step} realm")
-            elif self.rwsi >= 100:
-                if self.rw100 ==1:
-                    self.output.insert(tk.END,"The sect master already guided you\n")
-                else:
-                    self.output.insert(tk.END,f"Magnificent you reached 100 relations with the {self.psc}.\n"
-                          f"The sect master taught you and you were able to reach the peak in the {self.step} realm.")
-                    nfm = 9 - self.rsn
-                    self.rsn += nfm
-                    self.rea += nfm
-                    self.drc.config(text=f"{self.rsn} level of \n{self.step} realm")
-                    self.rw100 = 1
-                    if nfm == 0:
-                        self.output.insert(tk.END,"You are already at the peak "
-                              "but the sect master was able to teach you so much that now you can break through on your own\n")
-                        self.cue += self.acr
+    def sects(self,c):
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 1:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
 
 
-                    self.otu = 1
 
 
-        else:
-
-
+        if self.psc == None:
 
                 nsc = ["1 Heavenly Sword Sect\n","2 Demonic Blood Sect\n","3 Mystic Lotus Sect\n","4 Azure Cloud Sect\n"] #names of the sects
                 self.output.insert(tk.END,"")
@@ -296,25 +266,249 @@ class Game():
                     self.output.insert(tk.END,sect)
                 self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=game.sdt1)
                 self.butt1.place(x=559, y=340)
+                self.bt1 = 1
 
                 self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=game.sdt2)
                 self.butt2.place(x=629, y=340)
+                self.bt2 = 1
 
                 self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=game.sdt3)
                 self.butt3.place(x=559, y=380)
+                self.bt3 = 1
 
                 self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=game.sdt4)
                 self.butt4.place(x=629, y=380)
+                self.bt4 = 1
+
+        else:
+            self.butt1.destroy()
+            self.butt2.destroy()
+            self.output.insert(tk.END,"Do you want to (1) improve relations with your sect or "
+                                      "(2) do you want to increase your rank in the sect? \n")
+            self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.sects(1))
+            self.butt1.place(x=559, y=340)
+            self.bt1 = 1
+
+            self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.sects(2))
+            self.butt2.place(x=629, y=340)
+            self.bt2 = 1
+            self.output.yview(tk.END)
+
+            if c == 2:
+                if self.bt1 == 1:
+                    self.butt1.destroy()
+                    self.bt1 = 0
+                if self.bt2 == 1:
+                    self.butt2.destroy()
+                    self.bt2 = 0
+                if self.bt3 == 1:
+                    self.butt3.destroy()
+                    self.bt3 = 0
+                if self.bt4 == 1:
+                    self.butt4.destroy()
+                    self.bt4 = 0
+                if self.sr == 0:
+                    pass
+                elif self.sr == 1:
+                    self.output.insert(tk.END,"You are currently a outer disciple"
+                                              " but you can improve your rank in the sect, by doing:\n")
+                    self.output.insert(tk.END,"\n")
+                    self.output.insert(tk.END,"1 Help with some regular tasks\n")
+                    self.output.insert(tk.END,"2 do easy sect missions\n")
+                    self.output.insert(tk.END,"3 Gather firewood and water for the sect’s communal areas\n")
+                    self.output.insert(tk.END,"4 Gather herbs or resources for the sect\n")
+
+                    self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.sri(1))
+                    self.butt1.place(x=559, y=340)
+                    self.bt1 = 1
+
+                    self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.sri(1))
+                    self.butt2.place(x=629, y=340)
+                    self.bt2 = 1
+
+                    self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.sri(1))
+                    self.butt3.place(x=559, y=380)
+                    self.bt3 = 1
+
+                    self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.sri(1))
+                    self.butt4.place(x=629, y=380)
+                    self.bt4 = 1
+
+                elif self.sr == 2:
+                    self.output.insert(tk.END,"You are currently a inner disciple"
+                                              " but you can improve your rank in the sect, by doing:\n")
+                    self.output.insert(tk.END,"\n")
+                    self.output.insert(tk.END,"1 Scout potential outer disciples for the sect\n")
+                    self.output.insert(tk.END,"2 Assist in managing and training outer disciples\n")
+                    self.output.insert(tk.END,"3 Guard the sect entrance or patrol the outer grounds\n")
+                    self.output.insert(tk.END,"4 Assist in setting up and maintaining training grounds\n")
+
+                    self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.sri(2))
+                    self.butt1.place(x=559, y=340)
+                    self.bt1 = 1
+
+                    self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.sri(2))
+                    self.butt2.place(x=629, y=340)
+                    self.bt2 = 1
+
+                    self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.sri(2))
+                    self.butt3.place(x=559, y=380)
+                    self.bt3 = 1
+
+                    self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.sri(2))
+                    self.butt4.place(x=629, y=380)
+                    self.bt4 = 1
+
+                elif self.sr == 3:
+                    self.output.insert(tk.END,"You are currently a core disciple"
+                                              " but you can improve your rank in the sect, by doing:\n")
+                    self.output.insert(tk.END,"\n")
+                    self.output.insert(tk.END,"1 Train and mentor inner disciples\n")
+                    self.output.insert(tk.END,"2 Guard the sect treasury \n")
+                    self.output.insert(tk.END,"3 help the elders\n")
+                    self.output.insert(tk.END,"4 help supervising training fights\n")
+
+                    self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.sri(3))
+                    self.butt1.place(x=559, y=340)
+                    self.bt1 = 1
+
+                    self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.sri(3))
+                    self.butt2.place(x=629, y=340)
+                    self.bt2 = 1
+
+                    self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.sri(3))
+                    self.butt3.place(x=559, y=380)
+                    self.bt3 = 1
+
+                    self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.sri(3))
+                    self.butt4.place(x=629, y=380)
+                    self.bt4 = 1
+
+                #elif self.sr == 4:
+                 #   self.output.insert(tk.END,"You are currently a elder"
+                  #                            " but you can improve your rank in the sect, by doing:\n")
+                #elif self.sr == 5:
+                 #   self.output.insert(tk.END,"You are currently the sect leader\n")
+            elif c == 1:
+                if self.bt1 == 1:
+                    self.butt1.destroy()
+                    self.bt1 = 0
+                if self.bt2 == 1:
+                    self.butt2.destroy()
+                    self.bt2 = 0
+                if self.bt3 == 1:
+                    self.butt3.destroy()
+                    self.bt3 = 0
+                if self.bt4 == 1:
+                    self.butt4.destroy()
+                    self.bt4 = 0
+                if self.psc != None:
+                    if self.otu == 1:
+                        self.output.insert(tk.END,"You already reached max relations with your sect\n")
+                    ri = random.randrange(5,20)
+                    self.rwsi += ri
+                    self.output.insert(tk.END,f"You were able to improve your relation with {self.psc} to {self.rwsi}\n")
+                    if 1 <= self.rwsi < 25:
+                        self.output.insert(tk.END,f"If you reach 25 relations with {self.psc} you will be able to reach a new cultivation level\n")
+                    elif 25 <= self.rwsi < 50:
+                        if self.rw25 == 1:
+                            self.output.insert(tk.END,"If you are able to reach 50 relations a wise elder will teach you\n")
+                        else:
+                            self.output.insert(tk.END,"Congratulation you reached relations up to 25.\n"
+                                  " You are getting toughed by a new elder and you try to reach a new cultivation level\n")
+                            self.rw25 = 1
+
+                            if self.rsn == 9:
+                                self.output.insert(tk.END,f"As you are currently in the peek of {self.step}\n"
+                                      f" the elder was not able to help you break through but you got 1000 cultivation xp\n")
+                                self.cue += 1000
+                                self.kph.config(text=f"Cultivation Xp: {self.cue}")
+                            else:
+                                self.rea += 1
+                                self.rsn += 1
+                                self.output.insert(tk.END,"You were able to reach a new cultivation level\n")
+                                self.drc.config(text=f"{self.rsn} level of \n{self.step} realm")
+                    elif 50 <= self.rwsi <100:
+                        if self.rw50 == 1:
+                            self.output.insert(tk.END,"If you reach 100 relations the sect master will teach you personally\n")
+                        else:
+                            self.output.insert(tk.END,"Fabulous you reached 50 relations.\n"
+                                  " A wise elder guided you on your way and you broke through 2 cultivation levels.\n")
+                            self.rw50 = 1
+                            if self.rsn >= 8:
+                                self.output.insert(tk.END,f"As you are currently in the {self.rsn} of {self.step}\n"
+                                      f" the elder was not able to help you break through but you got 2500 cultivation xp")
+                                self.cue += 2500
+                                self.kph.config(text=f"Cultivation Xp: {self.cue}")
+                            else:
+                                self.rea += 2
+                                self.rsn += 2
+                                self.drc.config(text=f"{self.rsn} level of \n{self.step} realm")
+                    elif self.rwsi >= 100:
+                        if self.rw100 ==1:
+                            self.output.insert(tk.END,"The sect master already guided you\n")
+                        else:
+                            self.output.insert(tk.END,f"Magnificent you reached 100 relations with the {self.psc}.\n"
+                                  f"The sect master taught you and you were able to reach the peak in the {self.step} realm.")
+                            nfm = 9 - self.rsn
+                            self.rsn += nfm
+                            self.rea += nfm
+                            self.drc.config(text=f"{self.rsn} level of \n{self.step} realm")
+                            self.rw100 = 1
+                            if nfm == 0:
+                                self.output.insert(tk.END,"You are already at the peak "
+                                      "but the sect master was able to teach you so much that now you can break through on your own\n")
+                                self.cue += self.acr
+
+
+                            self.otu = 1
 
         self.cp = self.rea * 100
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.kph.config(text=f"Cultivation Xp: {self.cue}")
         self.output.yview(tk.END)
 
+
+    def sri(self,cr):
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 1:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
+        self.rp += 10
+        if cr == 1:
+            nr = "Inner disciple"
+        elif cr == 2:
+            nr = "Core disciple"
+        elif cr == 3:
+            nr = "Sect Elder"
+        elif cr == 4:
+            nr = "Sect Leader"
+        if self.rp == 100:
+            self.output.insert(tk.END,f"You reached the rank of {nr}\n")
+            self.sr = 2
+        elif self.rp == 200:
+            self.output.insert(tk.END,f"You reached the rank of {nr}\n")
+            self.sr = 3
+        elif self.rp == 300:
+            self.output.insert(tk.END,f"You reached the rank of {nr}\n")
+        self.output.insert(tk.END,f"You completed your task and are now closer to reach the rank of {nr}\n")
+
+
+
     def sdt1(self):
             self.psc = "Heavenly Sword Sect"
             rws = self.sfr_HSS
-            self.output.insert(tk.END,f"You joined {self.psc}\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
+            self.sr = 1
+            self.bt1 = 1
             for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
                 try:
                     bt.destroy()
@@ -324,7 +518,9 @@ class Game():
     def sdt2(self):
             self.psc = "Demonic Blood Sect"
             rws = self.sfr_DBS
-            self.output.insert(tk.END,f"You joined {self.psc}\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
+            self.sr = 1
+            self.bt2 = 1
             for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
                 try:
                     bt.destroy()
@@ -334,7 +530,10 @@ class Game():
     def sdt3(self):
             self.psc = "Mystic Lotus Sect"
             rws = self.sfr_MLS
-            self.output.insert(tk.END,f"You joined {self.psc}\n")
+
+            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
+            self.sr = 1
+            self.bt3 = 1
             for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
                 try:
                     bt.destroy()
@@ -344,7 +543,9 @@ class Game():
     def sdt4(self):
             self.psc = "Azure Cloud Sect"
             rws = self.sfr_ALS
-            self.output.insert(tk.END,f"You joined {self.psc}\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
+            self.sr = 1
+            self.bt4 = 1
             for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
                 try:
                     bt.destroy()
@@ -385,6 +586,19 @@ class Game():
 
 
     def travel(self,t,c):
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 2:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
         if t == 0:
             self.output.insert(tk.END,"\n")
             self.output.insert(tk.END,"You can visit:\n")
@@ -414,6 +628,7 @@ class Game():
                 self.location = "random Place"
                 self.bls += 50
                 self.output.insert(tk.END,"You are now at a random place\n")
+                self.bt1 = 0
                 for bt in [self.butt1,self.butt2]:
                     try:
                         bt.destroy()
@@ -431,6 +646,7 @@ class Game():
                 event = random.random()
                 self.location = "Village"
                 self.output.insert(tk.END,f"You went to the {self.location}\n")
+                self.bt2 = 1
                 for bt in [self.butt1,self.butt2]:
                     try:
                         bt.destroy()
@@ -630,6 +846,19 @@ class Game():
 
 
     def time(self,t,c):
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 2:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
         if c == 0:
             self.output.insert(tk.END,"How long do you want to cultivate?\n")
             self.output.insert(tk.END,"\n")
@@ -653,10 +882,15 @@ class Game():
 
             day = 1
             while t >0:
+                l = self.bls * 10
                 day += 1
                 t -= 1
+                b = random.randint(0,200)
+                if b < 1:
+                    self.output.insert(tk.END, f"You experienced backlash and lost {l}\n")
+                    self.cue -= l
                 self.cue += self.bls
-                self.output.insert(tk.END,f"{self.cue}\n")
+
                 self.kph.config(text=f"Cultivation Xp: {self.cue}")
                 c = 0
                 for bt in [self.butt1, self.butt2, self.butt3, self.butt4]:
@@ -664,6 +898,7 @@ class Game():
                         bt.destroy()
                     except:
                         pass
+            self.output.insert(tk.END, f"You completed your cultivation\n")
         self.output.yview(tk.END)
 
 
