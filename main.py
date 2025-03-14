@@ -42,12 +42,26 @@ class Game():
         self.bt4 = 0
         self.sr = 0 #sect rank
         self.rp = int(0) #reputation in sect
-    def uin(self):
+    def uin(self,c):
         self.uip = self.inp.get()
         self.inp.delete(0, tk.END)
-        if self.pr == 0:
-            self.pr += 1
+        if c == 0:
+            self.pr = 1
             game.start()
+        else:
+            if self.uip == 1:
+                game.travel(0)
+            elif self.uip == 2:
+                game.sects(0)
+            elif self.uip == 3:
+                game.combat()
+            elif self.uip == 4:
+                pass
+            elif self.uip == 5:
+                game.time(0,0)
+            elif self.uip == 6:
+                game.realms()
+
     def combat(self):
         if self.bt1 == 1:
             self.butt1.destroy()
@@ -64,6 +78,7 @@ class Game():
             self.bt4 = 0
         lwp = self.cp - 50
         hwp = self.cp + 50
+        self.output.insert(tk.END,"\n")
         self.output.insert(tk.END,"Who do you want to fight with?\n")
         self.output.insert(tk.END,"\n")
         nl = ["Mo Tianxie","Xie Wuhen","Bai Mingsheng","Guo Zhenhai",
@@ -153,7 +168,7 @@ class Game():
         self.inp = tk.Entry(self.root,width=61)
         self.inp.place(x=0,y=460)
 
-        self.but1 = tk.Button(self.root, height=2, width=4,text="Travel",command=lambda: game.travel(0,0))
+        self.but1 = tk.Button(self.root, height=2, width=4,text="Travel",command=lambda: game.travel(0))
         self.but1.place(x=559,y=0)
 
         self.but2 = tk.Button(self.root,height=2,width=4,text="Sect",command=lambda: game.sects(0))
@@ -177,7 +192,7 @@ class Game():
         #self.but8 = tk.Button(self.root,height=2,width=4,text="No",command=game.no)
         #self.but8.place(x=629,y=340)
 
-        self.but9 = tk.Button(self.root,height=2,width=8,text="Enter",command=game.uin)
+        self.but9 = tk.Button(self.root,height=2,width=8,text="Enter",command=lambda: game.uin(0))
         self.but9.place(x=559,y=450)
 
         self.cpl = tk.Label(self.root,height=2,width=15,text=f"Combat Power:\n {self.cp}")
@@ -222,20 +237,21 @@ class Game():
 
         self.women = tk.Button(self.root,height=2,width=4,text="Women",command=game.gedw)
         self.women.place(x=629,y=380)
+        self.but9.config(command=lambda: game.uin(1))
 
     def gedm(self):
         self.gs = "Man"
         self.output.insert(tk.END, f"You are {self.nm} and you are a {self.gs}\n")
         self.man.destroy()
         self.women.destroy()
-        self.output.insert(tk.END,"From now on you can do whatever you want")
+        self.output.insert(tk.END,"From now on you can do whatever you want\n")
 
     def gedw(self):
         self.gs = "Women"
         self.output.insert(tk.END, f"You are {self.nm} and you are a {self.gs}\n")
         self.women.destroy()
         self.man.destroy()
-        self.output.insert(tk.END,"From now on you can do whatever you want")
+        self.output.insert(tk.END,"From now on you can do whatever you want\n")
 
 
 
@@ -261,7 +277,9 @@ class Game():
         if self.psc == None:
 
                 nsc = ["1 Heavenly Sword Sect\n","2 Demonic Blood Sect\n","3 Mystic Lotus Sect\n","4 Azure Cloud Sect\n"] #names of the sects
-                self.output.insert(tk.END,"")
+                self.output.insert(tk.END,"\n")
+                self.output.insert(tk.END,"Which sect do you want to join?\n")
+                self.output.insert(tk.END,"\n")
                 for sect in nsc:
                     self.output.insert(tk.END,sect)
                 self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=game.sdt1)
@@ -585,7 +603,7 @@ class Game():
         self.output.yview(tk.END)
 
 
-    def travel(self,t,c):
+    def travel(self,t):
         if self.bt1 == 1:
             self.butt1.destroy()
             self.bt1 = 0
@@ -860,6 +878,7 @@ class Game():
             self.butt4.destroy()
             self.bt4 = 0
         if c == 0:
+            self.output.insert(tk.END,"\n")
             self.output.insert(tk.END,"How long do you want to cultivate?\n")
             self.output.insert(tk.END,"\n")
             self.output.insert(tk.END,"1 10 days \n")
