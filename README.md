@@ -12,6 +12,8 @@ Advance Your Cultivation – Progress through cultivation realms up to Void Refi
 
 Cultivate – Train and grow stronger in the path of cultivation.
 
+be careful as sometimes you can experience backlash from cultivation
+
 Simple Combat- Fight against 1 of 5 enemys and try to win with a higher combat power helo
 
 Increase your Combat Power by reaching a higher cultivation realm or by improving your realm exclusive activities
