@@ -66,7 +66,7 @@ class Game():
         if self.bt1 == 1:
             self.butt1.destroy()
             self.bt1 = 0
-        if self.bt2 == 2:
+        if self.bt2 == 1:
             self.butt2.destroy()
             self.bt2 = 0
         if self.bt3 == 1:
@@ -95,15 +95,19 @@ class Game():
 
         self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.fdt1(e1))
         self.butt1.place(x=559, y=340)
+        self.bt1 = 1
 
         self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.fdt2(e2))
         self.butt2.place(x=629, y=340)
+        self.bt2 = 1
 
         self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.fdt3(e3))
         self.butt3.place(x=559, y=380)
+        self.bt3 = 1
 
         self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.fdt4(e4))
         self.butt4.place(x=629, y=380)
+        self.bt4 = 1
 
         self.output.insert(tk.END,"\n")
         self.output.yview(tk.END)
@@ -112,48 +116,74 @@ class Game():
                     if e1 < self.cp:
                         self.output.insert(tk.END,"You won against your enemy\n")
                     else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-                    self.bt1 += 1
-
-                    for bt in [self.butt1, self.butt2, self.butt3, self.butt4]:
-                        try:
-                            bt.destroy()
-                        except:
-                            pass
+                    if self.bt1 == 1:
+                        self.butt1.destroy()
+                        self.bt1 = 0
+                    if self.bt2 == 1:
+                        self.butt2.destroy()
+                        self.bt2 = 0
+                    if self.bt3 == 1:
+                        self.butt3.destroy()
+                        self.bt3 = 0
+                        self.bt3 = 0
+                    if self.bt4 == 1:
+                        self.butt4.destroy()
+                        self.bt4 = 0
 
                     self.output.yview(tk.END)
     def fdt2(self,e2):
             if e2 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            self.bt2 += 1
-            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
-                try:
-                    bt.destroy()
-                except:
-                    pass
+            if self.bt1 == 1:
+                self.butt1.destroy()
+                self.bt1 = 0
+            if self.bt2 == 1:
+                self.butt2.destroy()
+                self.bt2 = 0
+            if self.bt3 == 1:
+                self.butt3.destroy()
+                self.bt3 = 0
+                self.bt3 = 0
+            if self.bt4 == 1:
+                self.butt4.destroy()
+                self.bt4 = 0
             self.output.yview(tk.END)
     def fdt3(self,e3):
             if e3 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            self.bt3 += 1
-
-            for bt in [self.butt1, self.butt2, self.butt3, self.butt4]:
-                try:
-                    bt.destroy()
-                except:
-                    pass
+            if self.bt1 == 1:
+                self.butt1.destroy()
+                self.bt1 = 0
+            if self.bt2 == 1:
+                self.butt2.destroy()
+                self.bt2 = 0
+            if self.bt3 == 1:
+                self.butt3.destroy()
+                self.bt3 = 0
+                self.bt3 = 0
+            if self.bt4 == 1:
+                self.butt4.destroy()
+                self.bt4 = 0
             self.output.yview(tk.END)
     def fdt4(self,e4):
             if e4 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            self.bt4 += 1
-            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
-                try:
-                    bt.destroy()
-                except:
-                    pass
+            if self.bt1 == 1:
+                self.butt1.destroy()
+                self.bt1 = 0
+            if self.bt2 == 1:
+                self.butt2.destroy()
+                self.bt2 = 0
+            if self.bt3 == 1:
+                self.butt3.destroy()
+                self.bt3 = 0
+                self.bt3 = 0
+            if self.bt4 == 1:
+                self.butt4.destroy()
+                self.bt4 = 0
             self.output.yview(tk.END)
 
     def window(self):
@@ -524,51 +554,80 @@ class Game():
     def sdt1(self):
             self.psc = "Heavenly Sword Sect"
             rws = self.sfr_HSS
-            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
             self.bt1 = 1
-            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
-                try:
-                    bt.destroy()
-                except:
-                    pass
+            if self.bt1 == 1:
+                self.butt1.destroy()
+                self.bt1 = 0
+            if self.bt2 == 1:
+                self.butt2.destroy()
+                self.bt2 = 0
+            if self.bt3 == 1:
+                self.butt3.destroy()
+                self.bt3 = 0
+                self.bt3 = 0
+            if self.bt4 == 1:
+                self.butt4.destroy()
+                self.bt4 = 0
             self.output.yview(tk.END)
     def sdt2(self):
             self.psc = "Demonic Blood Sect"
             rws = self.sfr_DBS
-            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
-            self.bt2 = 1
-            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
-                try:
-                    bt.destroy()
-                except:
-                    pass
+            if self.bt1 == 1:
+                self.butt1.destroy()
+                self.bt1 = 0
+            if self.bt2 == 1:
+                self.butt2.destroy()
+                self.bt2 = 0
+            if self.bt3 == 1:
+                self.butt3.destroy()
+                self.bt3 = 0
+                self.bt3 = 0
+            if self.bt4 == 1:
+                self.butt4.destroy()
+                self.bt4 = 0
             self.output.yview(tk.END)
     def sdt3(self):
             self.psc = "Mystic Lotus Sect"
             rws = self.sfr_MLS
 
-            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
-            self.bt3 = 1
-            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
-                try:
-                    bt.destroy()
-                except:
-                    pass
+            if self.bt1 == 1:
+                self.butt1.destroy()
+                self.bt1 = 0
+            if self.bt2 == 1:
+                self.butt2.destroy()
+                self.bt2 = 0
+            if self.bt3 == 1:
+                self.butt3.destroy()
+                self.bt3 = 0
+                self.bt3 = 0
+            if self.bt4 == 1:
+                self.butt4.destroy()
+                self.bt4 = 0
             self.output.yview(tk.END)
     def sdt4(self):
             self.psc = "Azure Cloud Sect"
             rws = self.sfr_ALS
-            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
-            self.bt4 = 1
-            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
-                try:
-                    bt.destroy()
-                except:
-                    pass
+            if self.bt1 == 1:
+                self.butt1.destroy()
+                self.bt1 = 0
+            if self.bt2 == 1:
+                self.butt2.destroy()
+                self.bt2 = 0
+            if self.bt3 == 1:
+                self.butt3.destroy()
+                self.bt3 = 0
+                self.bt3 = 0
+            if self.bt4 == 1:
+                self.butt4.destroy()
+                self.bt4 = 0
             self.output.yview(tk.END)
 
     def realms(self):
@@ -607,7 +666,7 @@ class Game():
         if self.bt1 == 1:
             self.butt1.destroy()
             self.bt1 = 0
-        if self.bt2 == 2:
+        if self.bt2 == 1:
             self.butt2.destroy()
             self.bt2 = 0
         if self.bt3 == 1:
@@ -636,9 +695,11 @@ class Game():
 
             self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=game.rdt1)
             self.butt1.place(x=559,y=340)
+            self.bt1 = 1
 
             self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=game.rdt2)
             self.butt2.place(x=629,y=340)
+            self.bt2 = 1
             self.output.yview(tk.END)
 
 
@@ -646,13 +707,15 @@ class Game():
                 self.location = "random Place"
                 self.bls += 50
                 self.output.insert(tk.END,"You are now at a random place\n")
-                self.bt1 = 0
-                for bt in [self.butt1,self.butt2]:
-                    try:
-                        bt.destroy()
-                    except: pass
+                if self.bt1 == 1:
+                    self.butt1.destroy()
+                    self.bt1 = 0
+                if self.bt2 == 1:
+                    self.butt2.destroy()
+                    self.bt2 = 0
                 if self.bt3 == 1:
                     self.butt3.destroy()
+                    self.bt3 = 0
                     self.bt3 = 0
                 if self.bt4 == 1:
                     self.butt4.destroy()
@@ -664,13 +727,15 @@ class Game():
                 event = random.random()
                 self.location = "Village"
                 self.output.insert(tk.END,f"You went to the {self.location}\n")
-                self.bt2 = 1
-                for bt in [self.butt1,self.butt2]:
-                    try:
-                        bt.destroy()
-                    except: pass
+                if self.bt1 == 1:
+                    self.butt1.destroy()
+                    self.bt1 = 0
+                if self.bt2 == 1:
+                    self.butt2.destroy()
+                    self.bt2 = 0
                 if self.bt3 == 1:
                     self.butt3.destroy()
+                    self.bt3 = 0
                     self.bt3 = 0
                 if self.bt4 == 1:
                     self.butt4.destroy()
@@ -718,12 +783,15 @@ class Game():
                 self.location = "sect middle"
                 self.output.insert(tk.END,f"You are at the {self.location}\n")
                 self.bls += 200
-                for bt in [self.butt1,self.butt2]:
-                    try:
-                        bt.destroy()
-                    except: pass
+                if self.bt1 == 1:
+                    self.butt1.destroy()
+                    self.bt1 = 0
+                if self.bt2 == 2:
+                    self.butt2.destroy()
+                    self.bt2 = 0
                 if self.bt3 == 1:
                     self.butt3.destroy()
+                    self.bt3 = 0
                     self.bt3 = 0
                 if self.bt4 == 1:
                     self.butt4.destroy()
@@ -733,12 +801,15 @@ class Game():
                 self.location = "godly artifact"
                 self.output.insert(tk.END,f"You are at the {self.location}\n")
                 self.bls += 1000
-                for bt in [self.butt1,self.butt2]:
-                    try:
-                        bt.destroy()
-                    except: pass
+                if self.bt1 == 1:
+                    self.butt1.destroy()
+                    self.bt1 = 0
+                if self.bt2 == 2:
+                    self.butt2.destroy()
+                    self.bt2 = 0
                 if self.bt3 == 1:
                     self.butt3.destroy()
+                    self.bt3 = 0
                     self.bt3 = 0
                 if self.bt4 == 1:
                     self.butt4.destroy()
@@ -867,7 +938,7 @@ class Game():
         if self.bt1 == 1:
             self.butt1.destroy()
             self.bt1 = 0
-        if self.bt2 == 2:
+        if self.bt2 == 1:
             self.butt2.destroy()
             self.bt2 = 0
         if self.bt3 == 1:
@@ -888,15 +959,19 @@ class Game():
 
             self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.time(10,1))
             self.butt1.place(x=559, y=340)
+            self.bt1 = 1
 
             self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.time(25,1))
             self.butt2.place(x=629, y=340)
+            self.bt2 = 1
 
             self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.time(50,1))
             self.butt3.place(x=559, y=380)
+            self.bt3 = 1
 
             self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.time(100,1))
             self.butt4.place(x=629, y=380)
+            self.bt4 = 1
         else:
 
             day = 1
