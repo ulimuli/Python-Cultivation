@@ -42,6 +42,22 @@ class Game():
         self.bt4 = 0
         self.sr = 0 #sect rank
         self.rp = int(0) #reputation in sect
+
+
+    def bdel(self):
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 1:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
     def uin(self,c):
         self.uip = self.inp.get()
         self.inp.delete(0, tk.END)
@@ -63,19 +79,7 @@ class Game():
                 game.realms()
 
     def combat(self):
-        if self.bt1 == 1:
-            self.butt1.destroy()
-            self.bt1 = 0
-        if self.bt2 == 1:
-            self.butt2.destroy()
-            self.bt2 = 0
-        if self.bt3 == 1:
-            self.butt3.destroy()
-            self.bt3 = 0
-            self.bt3 = 0
-        if self.bt4 == 1:
-            self.butt4.destroy()
-            self.bt4 = 0
+        game.bdel()
         lwp = self.cp - 50
         hwp = self.cp + 50
         self.output.insert(tk.END,"\n")
@@ -116,74 +120,25 @@ class Game():
                     if e1 < self.cp:
                         self.output.insert(tk.END,"You won against your enemy\n")
                     else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-                    if self.bt1 == 1:
-                        self.butt1.destroy()
-                        self.bt1 = 0
-                    if self.bt2 == 1:
-                        self.butt2.destroy()
-                        self.bt2 = 0
-                    if self.bt3 == 1:
-                        self.butt3.destroy()
-                        self.bt3 = 0
-                        self.bt3 = 0
-                    if self.bt4 == 1:
-                        self.butt4.destroy()
-                        self.bt4 = 0
-
+                    game.bdel()
                     self.output.yview(tk.END)
     def fdt2(self,e2):
             if e2 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            if self.bt1 == 1:
-                self.butt1.destroy()
-                self.bt1 = 0
-            if self.bt2 == 1:
-                self.butt2.destroy()
-                self.bt2 = 0
-            if self.bt3 == 1:
-                self.butt3.destroy()
-                self.bt3 = 0
-                self.bt3 = 0
-            if self.bt4 == 1:
-                self.butt4.destroy()
-                self.bt4 = 0
+            game.bdel()
             self.output.yview(tk.END)
     def fdt3(self,e3):
             if e3 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            if self.bt1 == 1:
-                self.butt1.destroy()
-                self.bt1 = 0
-            if self.bt2 == 1:
-                self.butt2.destroy()
-                self.bt2 = 0
-            if self.bt3 == 1:
-                self.butt3.destroy()
-                self.bt3 = 0
-                self.bt3 = 0
-            if self.bt4 == 1:
-                self.butt4.destroy()
-                self.bt4 = 0
+            game.bdel()
             self.output.yview(tk.END)
     def fdt4(self,e4):
             if e4 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            if self.bt1 == 1:
-                self.butt1.destroy()
-                self.bt1 = 0
-            if self.bt2 == 1:
-                self.butt2.destroy()
-                self.bt2 = 0
-            if self.bt3 == 1:
-                self.butt3.destroy()
-                self.bt3 = 0
-                self.bt3 = 0
-            if self.bt4 == 1:
-                self.butt4.destroy()
-                self.bt4 = 0
+            game.bdel()
             self.output.yview(tk.END)
 
     def window(self):
@@ -288,21 +243,7 @@ class Game():
 
 
     def sects(self,c):
-        if self.bt1 == 1:
-            self.butt1.destroy()
-            self.bt1 = 0
-        if self.bt2 == 1:
-            self.butt2.destroy()
-            self.bt2 = 0
-        if self.bt3 == 1:
-            self.butt3.destroy()
-            self.bt3 = 0
-        if self.bt4 == 1:
-            self.butt4.destroy()
-            self.bt4 = 0
-
-
-
+        game.bdel()
 
         if self.psc == None:
 
@@ -343,18 +284,7 @@ class Game():
             self.output.yview(tk.END)
 
             if c == 2:
-                if self.bt1 == 1:
-                    self.butt1.destroy()
-                    self.bt1 = 0
-                if self.bt2 == 1:
-                    self.butt2.destroy()
-                    self.bt2 = 0
-                if self.bt3 == 1:
-                    self.butt3.destroy()
-                    self.bt3 = 0
-                if self.bt4 == 1:
-                    self.butt4.destroy()
-                    self.bt4 = 0
+                game.bdel()
                 if self.sr == 0:
                     pass
                 elif self.sr == 1:
@@ -438,18 +368,7 @@ class Game():
                 #elif self.sr == 5:
                  #   self.output.insert(tk.END,"You are currently the sect leader\n")
             elif c == 1:
-                if self.bt1 == 1:
-                    self.butt1.destroy()
-                    self.bt1 = 0
-                if self.bt2 == 1:
-                    self.butt2.destroy()
-                    self.bt2 = 0
-                if self.bt3 == 1:
-                    self.butt3.destroy()
-                    self.bt3 = 0
-                if self.bt4 == 1:
-                    self.butt4.destroy()
-                    self.bt4 = 0
+                game.bdel()
                 if self.psc != None:
                     if self.otu == 1:
                         self.output.insert(tk.END,"You already reached max relations with your sect\n")
@@ -514,22 +433,12 @@ class Game():
         self.cp = self.rea * 100
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.kph.config(text=f"Cultivation Xp: {self.cue}")
+        self.xpn.config(text=f"XP for next level:\n {self.acr}")
         self.output.yview(tk.END)
 
 
     def sri(self,cr):
-        if self.bt1 == 1:
-            self.butt1.destroy()
-            self.bt1 = 0
-        if self.bt2 == 1:
-            self.butt2.destroy()
-            self.bt2 = 0
-        if self.bt3 == 1:
-            self.butt3.destroy()
-            self.bt3 = 0
-        if self.bt4 == 1:
-            self.butt4.destroy()
-            self.bt4 = 0
+        game.bdel()
         self.rp += 10
         if cr == 1:
             nr = "Inner disciple"
@@ -557,38 +466,14 @@ class Game():
             self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
             self.bt1 = 1
-            if self.bt1 == 1:
-                self.butt1.destroy()
-                self.bt1 = 0
-            if self.bt2 == 1:
-                self.butt2.destroy()
-                self.bt2 = 0
-            if self.bt3 == 1:
-                self.butt3.destroy()
-                self.bt3 = 0
-                self.bt3 = 0
-            if self.bt4 == 1:
-                self.butt4.destroy()
-                self.bt4 = 0
+            game.bdel()
             self.output.yview(tk.END)
     def sdt2(self):
             self.psc = "Demonic Blood Sect"
             rws = self.sfr_DBS
             self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
-            if self.bt1 == 1:
-                self.butt1.destroy()
-                self.bt1 = 0
-            if self.bt2 == 1:
-                self.butt2.destroy()
-                self.bt2 = 0
-            if self.bt3 == 1:
-                self.butt3.destroy()
-                self.bt3 = 0
-                self.bt3 = 0
-            if self.bt4 == 1:
-                self.butt4.destroy()
-                self.bt4 = 0
+            game.bdel()
             self.output.yview(tk.END)
     def sdt3(self):
             self.psc = "Mystic Lotus Sect"
@@ -596,42 +481,19 @@ class Game():
 
             self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
-            if self.bt1 == 1:
-                self.butt1.destroy()
-                self.bt1 = 0
-            if self.bt2 == 1:
-                self.butt2.destroy()
-                self.bt2 = 0
-            if self.bt3 == 1:
-                self.butt3.destroy()
-                self.bt3 = 0
-                self.bt3 = 0
-            if self.bt4 == 1:
-                self.butt4.destroy()
-                self.bt4 = 0
+            game.bdel()
             self.output.yview(tk.END)
     def sdt4(self):
             self.psc = "Azure Cloud Sect"
             rws = self.sfr_ALS
             self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
-            if self.bt1 == 1:
-                self.butt1.destroy()
-                self.bt1 = 0
-            if self.bt2 == 1:
-                self.butt2.destroy()
-                self.bt2 = 0
-            if self.bt3 == 1:
-                self.butt3.destroy()
-                self.bt3 = 0
-                self.bt3 = 0
-            if self.bt4 == 1:
-                self.butt4.destroy()
-                self.bt4 = 0
+            game.bdel()
             self.output.yview(tk.END)
 
     def realms(self):
         acr = self.cr*self.rea #required
+        self.xpn.config(text=f"XP for next level:\n {self.acr}")
         self.acr = acr
         if self.cue >= acr:
             self.rsn += 1
@@ -650,9 +512,28 @@ class Game():
             elif 46 <= self.rea <= 54:
                 self.step = "Void Refinement"
             if self.rsn == 10:
-                self.output.insert(tk.END,"You advance to the next realm\n")
-                self.rsn = 1
-            self.output.insert(tk.END,f"Your  cultivation increased and reached the {self.rsn} of {self.step}\n")
+                c = random.randint(1,100)
+                if c > 75:
+                    self.output.insert(tk.END,"You experienced a backlash and you could not advance \n")
+                    self.rsn -= 5
+                    self.rea -= 5
+                    self.xpn.config(text=f"XP for next level:\n {self.acr}")
+                    if 1 <= self.rea <= 9:
+                        self.step = "Qi Gathering"
+                    elif 10 <= self.rea <= 18:
+                        self.step = "Foundation Establishment"
+                    elif 19 <= self.rea <= 27:
+                        self.step = "Core Formation"
+                    elif 28 <= self.rea <= 36:
+                        self.step = "Nascent Soul"
+                    elif 37 <= self.rea <= 45:
+                        self.step = "Soul Formation"
+                    elif 46 <= self.rea <= 54:
+                        self.step = "Void Refinement"
+                elif c <=74:
+                    self.output.insert(tk.END,"You advance to the next realm\n")
+                    self.rsn = 1
+            self.output.insert(tk.END,f"Your cultivation is now the {self.rsn} of {self.step}\n")
         else: self.output.insert(tk.END,"You do not have enough Xp\n")
         self.cp = self.rea * 100
         self.xpn.config(text=f"XP for next level:\n {self.acr}")
@@ -663,19 +544,7 @@ class Game():
 
 
     def travel(self,t):
-        if self.bt1 == 1:
-            self.butt1.destroy()
-            self.bt1 = 0
-        if self.bt2 == 1:
-            self.butt2.destroy()
-            self.bt2 = 0
-        if self.bt3 == 1:
-            self.butt3.destroy()
-            self.bt3 = 0
-            self.bt3 = 0
-        if self.bt4 == 1:
-            self.butt4.destroy()
-            self.bt4 = 0
+        game.bdel()
         if t == 0:
             self.output.insert(tk.END,"\n")
             self.output.insert(tk.END,"You can visit:\n")
@@ -707,19 +576,7 @@ class Game():
                 self.location = "random Place"
                 self.bls += 50
                 self.output.insert(tk.END,"You are now at a random place\n")
-                if self.bt1 == 1:
-                    self.butt1.destroy()
-                    self.bt1 = 0
-                if self.bt2 == 1:
-                    self.butt2.destroy()
-                    self.bt2 = 0
-                if self.bt3 == 1:
-                    self.butt3.destroy()
-                    self.bt3 = 0
-                    self.bt3 = 0
-                if self.bt4 == 1:
-                    self.butt4.destroy()
-                    self.bt4 = 0
+                game.bdel()
 
                 self.output.yview(tk.END)
 
@@ -727,19 +584,7 @@ class Game():
                 event = random.random()
                 self.location = "Village"
                 self.output.insert(tk.END,f"You went to the {self.location}\n")
-                if self.bt1 == 1:
-                    self.butt1.destroy()
-                    self.bt1 = 0
-                if self.bt2 == 1:
-                    self.butt2.destroy()
-                    self.bt2 = 0
-                if self.bt3 == 1:
-                    self.butt3.destroy()
-                    self.bt3 = 0
-                    self.bt3 = 0
-                if self.bt4 == 1:
-                    self.butt4.destroy()
-                    self.bt4 = 0
+                game.bdel()
                 self.bls += 100
                 self.output.yview(tk.END)
                 #if event > 0.75:
@@ -783,37 +628,13 @@ class Game():
                 self.location = "sect middle"
                 self.output.insert(tk.END,f"You are at the {self.location}\n")
                 self.bls += 200
-                if self.bt1 == 1:
-                    self.butt1.destroy()
-                    self.bt1 = 0
-                if self.bt2 == 2:
-                    self.butt2.destroy()
-                    self.bt2 = 0
-                if self.bt3 == 1:
-                    self.butt3.destroy()
-                    self.bt3 = 0
-                    self.bt3 = 0
-                if self.bt4 == 1:
-                    self.butt4.destroy()
-                    self.bt4 = 0
+                game.bdel()
                 self.output.yview(tk.END)
     def rdt4(self):
                 self.location = "godly artifact"
                 self.output.insert(tk.END,f"You are at the {self.location}\n")
                 self.bls += 1000
-                if self.bt1 == 1:
-                    self.butt1.destroy()
-                    self.bt1 = 0
-                if self.bt2 == 2:
-                    self.butt2.destroy()
-                    self.bt2 = 0
-                if self.bt3 == 1:
-                    self.butt3.destroy()
-                    self.bt3 = 0
-                    self.bt3 = 0
-                if self.bt4 == 1:
-                    self.butt4.destroy()
-                    self.bt4 = 0
+                game.bdel()
                 self.output.yview(tk.END)
 
     def control(self):
@@ -935,19 +756,7 @@ class Game():
 
 
     def time(self,t,c):
-        if self.bt1 == 1:
-            self.butt1.destroy()
-            self.bt1 = 0
-        if self.bt2 == 1:
-            self.butt2.destroy()
-            self.bt2 = 0
-        if self.bt3 == 1:
-            self.butt3.destroy()
-            self.bt3 = 0
-            self.bt3 = 0
-        if self.bt4 == 1:
-            self.butt4.destroy()
-            self.bt4 = 0
+        game.bdel()
         if c == 0:
             self.output.insert(tk.END,"\n")
             self.output.insert(tk.END,"How long do you want to cultivate?\n")
@@ -995,7 +804,51 @@ class Game():
             self.output.insert(tk.END, f"You completed your cultivation\n")
         self.output.yview(tk.END)
 
+class People():
+    def __init__(self):
+        self.uniqe_ID = 0
 
+    def new_Person(self,cnp):
+        sl = []
+        while cnp > 0:
+            cnp -= 1
+            nlist = ["Nie Li","Xiao Yan","Luo Zheng","Yang Kai","Chen Fan","Ye Ziyun",
+                     "Su Yan","Xiao Ning’er","Lin Feng","Qin Chen","Wang Lin","Jiang Chen",
+                     "Zhang Xuan","Li Qiye","Mo Fan","Han Li","Huang Xiaolong","Chu Feng",
+                     "Long Chen","Shen Xi","Fang Yuan","Bai Yunfei","Zhou Yuan","Xuanyuan Wentian",
+                     "Yan Zhaoge","Meng Hao","Ji Ning","Shen Tian","Tang San","Lei Yu"]
+            name = random.choice(nlist)
+            age = random.randrange(20,300)
+            c = random.randrange(1,3)
+            if c == 1:
+                People.bad_Person(self)
+            elif c == 2:
+                People.good_Person(self)
+            self.uniqe_ID += 1
+            nn = [self.uniqe_ID,name,age]
+            sl.append(nn)
+            print(f"You are {name}, you are {age} years old and you are number {self.uniqe_ID}")
+        return sl
+
+
+
+
+    #def bad_Person(self):
+       # mo = "Bad"
+     #   print(mo)
+      #  return mo
+    #def good_Person(self):
+     #   mo = "Good"
+    #    print(mo)
+   #     return mo
+
+  #  def get_Power(self):
+ #       pass
+
+
+#p = People()
+#pn = [p.new_Person(5)]
+#print(pn)
 
 game = Game()
 game.window()
