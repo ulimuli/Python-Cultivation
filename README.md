@@ -16,7 +16,7 @@ Cultivate – Train and grow stronger in the path of cultivation.
 
 
 
-Simple Combat- Fight against 1 of 5 enemys and try to win with a higher combat power helo
+Simple Combat - Fight against 1 of 5 enemys and try to win with a higher combat power
 
 Increase your Combat Power by reaching a higher cultivation realm or by improving your realm exclusive activities
 
