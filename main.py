@@ -5,6 +5,7 @@ import tkinter as tk
 
 
 class Game():
+    
     def __init__(self):
         self.location = None
         self.bls = int(100) #speed of cultivation
@@ -58,6 +59,8 @@ class Game():
         if self.bt4 == 1:
             self.butt4.destroy()
             self.bt4 = 0
+
+    
     def uin(self,c):
         self.uip = self.inp.get()
         self.inp.delete(0, tk.END)
@@ -78,6 +81,7 @@ class Game():
             elif self.uip == 6:
                 game.realms()
 
+    
     def combat(self):
         game.bdel()
         lwp = self.cp - 50
@@ -115,13 +119,14 @@ class Game():
 
         self.output.insert(tk.END,"\n")
         self.output.yview(tk.END)
+        
 
     def fdt1(self,e1):
-                    if e1 < self.cp:
-                        self.output.insert(tk.END,"You won against your enemy\n")
-                    else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-                    game.bdel()
-                    self.output.yview(tk.END)
+            if e1 < self.cp:
+                 self.output.insert(tk.END,"You won against your enemy\n")
+            else: self.output.insert(tk.END,"You lost but you were able to survive\n")
+            game.bdel()
+            self.output.yview(tk.END)
     def fdt2(self,e2):
             if e2 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
@@ -140,6 +145,7 @@ class Game():
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
             game.bdel()
             self.output.yview(tk.END)
+        
 
     def window(self):
         self.root = tk.Tk()
@@ -171,12 +177,6 @@ class Game():
         self.but6 = tk.Button(self.root,height=2,width=4,text="Ascension",command=game.realms)
         self.but6.place(x=629,y=80)
 
-        #self.but7 = tk.Button(self.root,height=2,width=4,text="Yes",command=game.yes)
-        #self.but7.place(x=559,y=340)
-
-        #self.but8 = tk.Button(self.root,height=2,width=4,text="No",command=game.no)
-        #self.but8.place(x=629,y=340)
-
         self.but9 = tk.Button(self.root,height=2,width=8,text="Enter",command=lambda: game.uin(0))
         self.but9.place(x=559,y=450)
 
@@ -192,7 +192,6 @@ class Game():
         self.xpn = tk.Label(self.root, height=2, width=15, text=f"XP for next level:\n {self.acr}")
         self.xpn.place(x=559, y=250)
 
-
         self.output.insert(tk.END,"Welcome to Python-Cultivation!\n")
         self.output.insert(tk.END,"\n")
         self.output.insert(tk.END,"You open your eyes to a world with vast towering mountains,"
@@ -205,14 +204,11 @@ class Game():
 
     def yes(self):
         self.output.insert(tk.END,"Yes\n")
-
     def no(self):
         self.output.insert(tk.END,"No\n")
 
 
-
     def start(self):
-
         self.nm = self.uip
         self.uip = None
 
@@ -223,14 +219,12 @@ class Game():
         self.women = tk.Button(self.root,height=2,width=4,text="Women",command=game.gedw)
         self.women.place(x=629,y=380)
         self.but9.config(command=lambda: game.uin(1))
-
     def gedm(self):
         self.gs = "Man"
         self.output.insert(tk.END, f"You are {self.nm} and you are a {self.gs}\n")
         self.man.destroy()
         self.women.destroy()
         self.output.insert(tk.END,"From now on you can do whatever you want\n")
-
     def gedw(self):
         self.gs = "Women"
         self.output.insert(tk.END, f"You are {self.nm} and you are a {self.gs}\n")
@@ -239,12 +233,8 @@ class Game():
         self.output.insert(tk.END,"From now on you can do whatever you want\n")
 
 
-
-
-
     def sects(self,c):
         game.bdel()
-
         if self.psc == None:
 
                 nsc = ["1 Heavenly Sword Sect\n","2 Demonic Blood Sect\n","3 Mystic Lotus Sect\n","4 Azure Cloud Sect\n"] #names of the sects
@@ -361,12 +351,7 @@ class Game():
                     self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.sri(3))
                     self.butt4.place(x=629, y=380)
                     self.bt4 = 1
-
-                #elif self.sr == 4:
-                 #   self.output.insert(tk.END,"You are currently a elder"
-                  #                            " but you can improve your rank in the sect, by doing:\n")
-                #elif self.sr == 5:
-                 #   self.output.insert(tk.END,"You are currently the sect leader\n")
+                    
             elif c == 1:
                 game.bdel()
                 if self.psc != None:
@@ -426,8 +411,6 @@ class Game():
                                 self.output.insert(tk.END,"You are already at the peak "
                                       "but the sect master was able to teach you so much that now you can break through on your own\n")
                                 self.cue += self.acr
-
-
                             self.otu = 1
 
         self.cp = self.rea * 100
@@ -478,7 +461,6 @@ class Game():
     def sdt3(self):
             self.psc = "Mystic Lotus Sect"
             rws = self.sfr_MLS
-
             self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
             self.sr = 1
             game.bdel()
@@ -490,6 +472,7 @@ class Game():
             self.sr = 1
             game.bdel()
             self.output.yview(tk.END)
+        
 
     def realms(self):
         acr = self.cr*self.rea #required
@@ -577,53 +560,13 @@ class Game():
                 self.bls += 50
                 self.output.insert(tk.END,"You are now at a random place\n")
                 game.bdel()
-
                 self.output.yview(tk.END)
-
     def rdt2(self):
-                event = random.random()
                 self.location = "Village"
                 self.output.insert(tk.END,f"You went to the {self.location}\n")
                 game.bdel()
                 self.bls += 100
                 self.output.yview(tk.END)
-                #if event > 0.75:
-                 #   k = random.random()
-                  #  if k <= 0.5:
-                   #     self.output.insert(tk.END,"The village is getting attacked currently do you want to help?\n")
-                     #   self.output.insert(tk.END,"\n")
-                    #    print("Yes or No?")
-                      #  l = input("Choice:")
-                       # if l == "Yes":
-                        #    r = random.random()
-                         #   if r <= 0.5:
-                          #      "You helped kill the bands and the villager thanked you"
-                           # else:
-                            #    print("You were unable to do anything against the bandits, but they let you be")
-                #        elif l == "No":
-                 #           print("You leave the village alone,"
-                  #                " when you came back 1 hour later the village was in ruin and on fire")
-                   #     else:
-                    #        print("Not a valid option,"
-                     #             " please be careful while writing and also look if you write in caps"), game.control()
-
-                #    elif k > 0.5:
-                 #       print("The village is currently holding a celebration do you wish to join?")
-                  #      print("")
-                   #     print("Yes or No?")
-                    #    o = input("Choice:")
-                     #   if o == "Yes":
-                      #      print("You had much fun with the villagers and celebrated deep into the night")
-                       # elif o == "No":
-                        #    print("You ignored the celebration and continue with your work alone")
-                #        else:
-                 #           print("Not a valid option,"
-                  #                " please be careful while writing and also look if you write in caps"), game.control()
-                #else:
-                 #   print("Nothing is currently happening in the village.")
-
-
-
     def rdt3(self):
                 self.location = "sect middle"
                 self.output.insert(tk.END,f"You are at the {self.location}\n")
@@ -636,124 +579,7 @@ class Game():
                 self.bls += 1000
                 game.bdel()
                 self.output.yview(tk.END)
-
-    def control(self):
-        self.cp = self.rea * 100
-        while True:
-            acr = self.cr * self.rea # required
-            self.acr = acr
-            print("")
-            print("What do you want to do?")
-            print("")
-            print("1 Go to a place")
-            print("2 Cultivate")
-            print("3 try to break through")
-            if self.psc == None:
-                print("4 join a sect")
-            elif self.otu < 1:
-                print(f"4 Improve relations with {self.psc}")
-            print("5 fight")
-            if self.step == "Qi Gathering":
-                print("6 improve Spirit Sea")
-                self.cp += self.sps
-                ch6 = 1 # just means that the realm is this and is used for the choice thing
-            elif self.step == "Foundation Establishment":
-                print("6 improve quality of Qi")
-                self.cp *= self.qq / 100
-                ch6 = 2
-            elif self.step == "Core Formation":
-                print("6 Condense Core")
-                self.cp *= self.pc
-                ch6 = 3
-            elif self.step == "Nascent Soul":
-                print("6 Improve Nascent Soul")
-                self.cp += self.ins * 1000
-                ch6 = 4
-            elif self.step == "Soul Formation":
-                print("6 expand your domain")
-                self.cp *= self.exd
-                ch6 = 5
-            elif self.step == "Void Refinement":
-                print("6 improve Dao Connection")
-                self.cp *= self.dac
-                ch6 = 6
-            print("")
-            print(f"Your cultivation is {self.rsn} in the {self.step} realm")
-            print(f"Cultivation Xp: {self.cue}")
-            print(f"required for next level: {self.acr}")
-            print(f"Your Combat Power is {self.cp}")
-            d = int(input("Choice:"))
-
-            if d == 1:
-                game.travel()
-
-            elif d == 2:
-                print("How long do you want to cultivate?")
-                print("")
-                print("1 10 days")
-                print("2 50 days")
-                print("3 100 days")
-                z = int(input("Choice:"))
-                if z == 1:
-                    self.ct = 10
-                    game.time()
-                elif z == 2:
-                    self.ct = 50
-                    game.time()
-                elif z == 3:
-                    self.ct = 100
-                    game.time()
-            elif d == 3:
-                game.realms()
-            elif d == 4:
-                game.sects()
-            elif d == 5:
-                game.combat()
-            elif d == 6:
-                sc = random.randrange(10, 50)
-                qi = sc / 10
-                if ch6 == 1:
-                    self.sps += sc
-                    print(f"improved your spirit sea by {sc} your spirit sea now has a size of {self.sps}")
-                elif ch6 == 2:
-                    if self.qq == 100:
-                        print("You already have the purest Qi")
-                    elif self.qq < 100:
-                        self.qq += qi
-                        print(f"Your Qi quality improved by {qi} and now has a purity of {self.qq}%")
-                        if self.qq >= 100:
-                            print("You reached the maximum purity of your Qi")
-                            self.qq = 100
-                elif ch6 == 3:
-                    if self.pc >= 100:
-                        print("You already completed your core")
-                    elif self.pc < 100:
-                        self.pc += qi
-                        print(f"Your Core has improved by {qi} and now is to {self.pc} completed")
-                        if self.pc >= 100:
-                            print("You completed your core")
-                            self.pc = 100
-                elif ch6 == 4:
-                    self.ins += sc
-                    print(f"The size of your Nascent Soul increased by {sc} meter"
-                          f" and has now reached a height of {self.ins} meter")
-                elif ch6 == 5:
-                    self.exd += sc
-                    print(f"The size of your domain increased by {sc} meter"
-                          f"and has now reached a size of {self.exd} meter")
-                elif ch6 == 6:
-                    self.dac += qi
-                    print(f"Your connection with the dao increased by {qi} "
-                          f"and has now reached a connection of {self.dac}%")
-                    if self.dac >= 100:
-                        print("You reached the dao and are now an immortal")
-                        print("")
-                        print("I hope you liked my game")
-                        break
-
-
-
-
+        
 
     def time(self,t,c):
         game.bdel()
@@ -804,51 +630,6 @@ class Game():
             self.output.insert(tk.END, f"You completed your cultivation\n")
         self.output.yview(tk.END)
 
-class People():
-    def __init__(self):
-        self.uniqe_ID = 0
-
-    def new_Person(self,cnp):
-        sl = []
-        while cnp > 0:
-            cnp -= 1
-            nlist = ["Nie Li","Xiao Yan","Luo Zheng","Yang Kai","Chen Fan","Ye Ziyun",
-                     "Su Yan","Xiao Ning’er","Lin Feng","Qin Chen","Wang Lin","Jiang Chen",
-                     "Zhang Xuan","Li Qiye","Mo Fan","Han Li","Huang Xiaolong","Chu Feng",
-                     "Long Chen","Shen Xi","Fang Yuan","Bai Yunfei","Zhou Yuan","Xuanyuan Wentian",
-                     "Yan Zhaoge","Meng Hao","Ji Ning","Shen Tian","Tang San","Lei Yu"]
-            name = random.choice(nlist)
-            age = random.randrange(20,300)
-            c = random.randrange(1,3)
-            if c == 1:
-                People.bad_Person(self)
-            elif c == 2:
-                People.good_Person(self)
-            self.uniqe_ID += 1
-            nn = [self.uniqe_ID,name,age]
-            sl.append(nn)
-            print(f"You are {name}, you are {age} years old and you are number {self.uniqe_ID}")
-        return sl
-
-
-
-
-    #def bad_Person(self):
-       # mo = "Bad"
-     #   print(mo)
-      #  return mo
-    #def good_Person(self):
-     #   mo = "Good"
-    #    print(mo)
-   #     return mo
-
-  #  def get_Power(self):
- #       pass
-
-
-#p = People()
-#pn = [p.new_Person(5)]
-#print(pn)
 
 game = Game()
 game.window()
