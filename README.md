@@ -6,6 +6,8 @@ Features:
 
 Join Sects – Become part of a sect and improve your relations to earn cultivation rewards.
 
+You are able to improve your rank from outer descible to inner to core and to even a sect elder for this you will need to do 12 unique task to help your sect.
+
 Explore the World – Visit different locations and experience random events.
 
 Advance Your Cultivation – Progress through cultivation realms up to Void Refinement, the highest realm currently available. Advancing requires 45 upgrades, with each step becoming progressively harder.
@@ -24,6 +26,4 @@ Increase the size of your Qi, increase its Quality, build a core, increase the s
 
 Includes interactive gui which is mostly usable via button clicks for now sadly
 
-You are able to improve your rank from outer descible to inner to core and to even a sect elder for this you will need to do 12 unique task to help your sect.
-
-As of currently there is a small bug with the gui. I am not sure what cases this but as it seems on windows the text field is bigger then on my mac i use. I will try to fix this bug as soon as possible.
+As of currently there is a small bug with the gui. I am not sure what couses this but as it seems on windows the text field is bigger then on my mac i use. I will try to fix this bug as soon as possible.
