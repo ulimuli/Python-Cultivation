@@ -6,24 +6,23 @@ Features:
 
 Join Sects – Become part of a sect and improve your relations to earn cultivation rewards.
 
-You are able to improve your rank from outer descible to inner to core and to even a sect elder for this you will need to do 12 unique task to help your sect.
+You are able to improve your rank from outer disciple to inner, to core, and even to a sect elder. For this, you will need to complete 12 unique tasks to help your sect.
 
 Explore the World – Visit different locations and experience random events.
 
 Advance Your Cultivation – Progress through cultivation realms up to Void Refinement, the highest realm currently available. Advancing requires 45 upgrades, with each step becoming progressively harder.
 
-be careful as sometimes you can experience backlash from reaching a new realm
+Be careful, as sometimes you can experience backlash from reaching a new realm.
 
-Cultivate – Train and grow stronger in the path of cultivation.
+Cultivate – Train and grow stronger on the path of cultivation.
 
+Simple Combat – Fight against one of five enemies and try to win with a higher combat power.
 
+Increase your Combat Power by reaching a higher cultivation realm or by improving your realm-exclusive activities.
 
-Simple Combat - Fight against 1 of 5 enemys and try to win with a higher combat power
+Increase the size of your Qi, improve its quality, build a core, increase the size of your nascent soul, expand your own domain, and finally, reach a connection with the Dao.
 
-Increase your Combat Power by reaching a higher cultivation realm or by improving your realm exclusive activities
+Includes an interactive GUI, which is mostly usable via button clicks for now, unfortunately.
 
-Increase the size of your Qi, increase its Quality, build a core, increase the size of your nascent soul, expand your own domain and finally reach the connection with the dao
+Currently, there is a small bug with the GUI. I am not sure what causes this, but it seems that on Windows, the text field is bigger than on my Mac. I will try to fix this bug as soon as possible.
 
-Includes interactive gui which is mostly usable via button clicks for now sadly
-
-As of currently there is a small bug with the gui. I am not sure what couses this but as it seems on windows the text field is bigger then on my mac i use. I will try to fix this bug as soon as possible.
