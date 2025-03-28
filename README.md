@@ -6,7 +6,7 @@ Features:
 
 Join Sects – Become part of a sect and improve your relations to earn cultivation rewards.
 
-You are able to improve your rank from outer disciple to inner, to core, and even to a sect elder. For this, you will need to complete 12 unique tasks to help your sect.
+Improve Sect rank - from outer disciple to inner, to core, and even to a sect elder. For this, you will need to complete 12 unique tasks to help your sect.
 
 Explore the World – Visit different locations and experience random events.
 
