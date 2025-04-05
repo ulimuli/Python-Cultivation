@@ -1,6 +1,6 @@
 Python-Cultivation
 
-This is a cultivation game inspired by cultivation novels set in ancient China.
+A cultivation game inspired by cultivation novels from all types of sources
 
 Features:
 
