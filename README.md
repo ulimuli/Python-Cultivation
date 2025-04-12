@@ -26,3 +26,4 @@ Includes an interactive GUI, which is mostly usable via button clicks for now, u
 
 Currently, there is a small bug with the GUI. I am not sure what causes this, but it seems that on Windows, the text field is bigger than on my Mac. I will try to fix this bug as soon as possible.
 
+This is just the beggining of this game and i hope to develop it further in the future.
