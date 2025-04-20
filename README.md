@@ -2,7 +2,7 @@ Python-Cultivation
 
 A cultivation game inspired by cultivation novels from all types of sources
 
-Features:
+In this game you are currently able to:
 
 Join Sects – Become part of a sect and improve your relations to earn cultivation rewards.
 
