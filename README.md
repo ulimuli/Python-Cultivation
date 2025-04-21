@@ -9,6 +9,7 @@ Join Sects – Become part of a sect and improve your relations to earn cultivat
 Improve Sect rank - from outer disciple to inner, to core, and even to a sect elder. For this, you will need to complete 12 unique tasks to help your sect.
 
 Explore the World – Visit different locations and experience random events.
+random events currently do not work. maybe in the future.
 
 Advance Your Cultivation – Progress through cultivation realms up to Void Refinement, the highest realm currently available. Advancing requires 45 upgrades, with each step becoming progressively harder.
 
