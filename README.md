@@ -1,4 +1,5 @@
-Python-Cultivation made by ulimuli
+Python-Cultivation 
+made by ulimuli
 
 A cultivation game inspired by cultivation novels from all types of sources
 
