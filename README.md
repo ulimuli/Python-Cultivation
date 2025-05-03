@@ -1,8 +1,6 @@
 Python-Cultivation 
 made by ulimuli
 
-A cultivation game inspired by cultivation novels from all types of sources
-
 All the festures currently in the game:
 
 Join Sects – Become part of a sect and improve your relations to earn cultivation rewards.
