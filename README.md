@@ -1,29 +1,23 @@
-Python-Cultivation 
-made by ulimuli
+Python-Cultivation
 
-All the festures currently in the game:
+This is a text-based cultivation game inspired by cultivation novels set in ancient China.
+
+Features:
 
 Join Sects – Become part of a sect and improve your relations to earn cultivation rewards.
 
-Improve Sect rank - from outer disciple to inner, to core, and even to a sect elder. For this, you will need to complete 12 unique tasks to help your sect.
-
 Explore the World – Visit different locations and experience random events.
-random events currently do not work. maybe in the future.
 
 Advance Your Cultivation – Progress through cultivation realms up to Void Refinement, the highest realm currently available. Advancing requires 45 upgrades, with each step becoming progressively harder.
 
-Be careful, as sometimes you can experience backlash from reaching a new realm.
+Cultivate – Train and grow stronger in the path of cultivation.
 
-Cultivate – Train and grow stronger on the path of cultivation.
+Simple Combat- Fight against 1 of 5 enemys and try to win with a higher combat power helo
 
-Simple Combat – Fight against one of five enemies and try to win with a higher combat power.
+Increase your Combat Power by reaching a higher cultivation realm or by improving your realm exclusive activities
 
-Increase your Combat Power by reaching a higher cultivation realm or by improving your realm-exclusive activities.
+Increase the size of your Qi, increase its Quality, build a core, increase the size of your nascent soul, expand your own domain and finally reach the connection with the dao
 
-Increase the size of your Qi, improve its quality, build a core, increase the size of your nascent soul, expand your own domain, and finally, reach a connection with the Dao.
+Includes interactive gui which is mostly usable via button clicks for now sadly
 
-Includes an interactive GUI, which is mostly usable via button clicks for now, unfortunately.
-
-Currently, there is a small bug with the GUI. I am not sure what causes this, but it seems that on Windows, the text field is bigger than on my Mac. I will try to fix this bug as soon as possible.
-
-For any Ideas or Bugs you have please write them to me as i would really appreciate them. :)
+As of currently there is a small bug with the gui. I am not sure what cases this but as it seems on windows the text field is bigger then on my mac i use. I will try to fix this bug as soon as possible.

@@ -2,10 +2,10 @@ import random
 import sys
 import time
 import tkinter as tk
+from Map import Map
 
 
 class Game():
-    
     def __init__(self):
         self.location = None
         self.bls = int(100) #speed of cultivation
@@ -43,13 +43,17 @@ class Game():
         self.bt4 = 0
         self.sr = 0 #sect rank
         self.rp = int(0) #reputation in sect
-
-
-    def bdel(self):
+    def uin(self):
+        self.uip = self.inp.get()
+        self.inp.delete(0, tk.END)
+        if self.pr == 0:
+            self.pr += 1
+            game.start()
+    def combat(self):
         if self.bt1 == 1:
             self.butt1.destroy()
             self.bt1 = 0
-        if self.bt2 == 1:
+        if self.bt2 == 2:
             self.butt2.destroy()
             self.bt2 = 0
         if self.bt3 == 1:
@@ -59,34 +63,8 @@ class Game():
         if self.bt4 == 1:
             self.butt4.destroy()
             self.bt4 = 0
-
-    
-    def uin(self,c):
-        self.uip = self.inp.get()
-        self.inp.delete(0, tk.END)
-        if c == 0:
-            self.pr = 1
-            game.start()
-        else:
-            if self.uip == 1:
-                game.travel(0)
-            elif self.uip == 2:
-                game.sects(0)
-            elif self.uip == 3:
-                game.combat()
-            elif self.uip == 4:
-                pass
-            elif self.uip == 5:
-                game.time(0,0)
-            elif self.uip == 6:
-                game.realms()
-
-    
-    def combat(self):
-        game.bdel()
         lwp = self.cp - 50
         hwp = self.cp + 50
-        self.output.insert(tk.END,"\n")
         self.output.insert(tk.END,"Who do you want to fight with?\n")
         self.output.insert(tk.END,"\n")
         nl = ["Mo Tianxie","Xie Wuhen","Bai Mingsheng","Guo Zhenhai",
@@ -103,49 +81,66 @@ class Game():
 
         self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.fdt1(e1))
         self.butt1.place(x=559, y=340)
-        self.bt1 = 1
 
         self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.fdt2(e2))
         self.butt2.place(x=629, y=340)
-        self.bt2 = 1
 
         self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.fdt3(e3))
         self.butt3.place(x=559, y=380)
-        self.bt3 = 1
 
         self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.fdt4(e4))
         self.butt4.place(x=629, y=380)
-        self.bt4 = 1
 
         self.output.insert(tk.END,"\n")
         self.output.yview(tk.END)
-        
 
     def fdt1(self,e1):
-            if e1 < self.cp:
-                 self.output.insert(tk.END,"You won against your enemy\n")
-            else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            game.bdel()
-            self.output.yview(tk.END)
+                    if e1 < self.cp:
+                        self.output.insert(tk.END,"You won against your enemy\n")
+                    else: self.output.insert(tk.END,"You lost but you were able to survive\n")
+                    self.bt1 += 1
+
+                    for bt in [self.butt1, self.butt2, self.butt3, self.butt4]:
+                        try:
+                            bt.destroy()
+                        except:
+                            pass
+
+                    self.output.yview(tk.END)
     def fdt2(self,e2):
             if e2 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            game.bdel()
+            self.bt2 += 1
+            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
+                try:
+                    bt.destroy()
+                except:
+                    pass
             self.output.yview(tk.END)
     def fdt3(self,e3):
             if e3 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            game.bdel()
+            self.bt3 += 1
+
+            for bt in [self.butt1, self.butt2, self.butt3, self.butt4]:
+                try:
+                    bt.destroy()
+                except:
+                    pass
             self.output.yview(tk.END)
     def fdt4(self,e4):
             if e4 < self.cp:
                 self.output.insert(tk.END,"You won against your enemy\n")
             else: self.output.insert(tk.END,"You lost but you were able to survive\n")
-            game.bdel()
+            self.bt4 += 1
+            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
+                try:
+                    bt.destroy()
+                except:
+                    pass
             self.output.yview(tk.END)
-        
 
     def window(self):
         self.root = tk.Tk()
@@ -159,7 +154,7 @@ class Game():
         self.inp = tk.Entry(self.root,width=61)
         self.inp.place(x=0,y=460)
 
-        self.but1 = tk.Button(self.root, height=2, width=4,text="Travel",command=lambda: game.travel(0))
+        self.but1 = tk.Button(self.root, height=2, width=4,text="Travel",command=lambda: game.travel(1,None))
         self.but1.place(x=559,y=0)
 
         self.but2 = tk.Button(self.root,height=2,width=4,text="Sect",command=lambda: game.sects(0))
@@ -177,7 +172,13 @@ class Game():
         self.but6 = tk.Button(self.root,height=2,width=4,text="Ascension",command=game.realms)
         self.but6.place(x=629,y=80)
 
-        self.but9 = tk.Button(self.root,height=2,width=8,text="Enter",command=lambda: game.uin(0))
+        #self.but7 = tk.Button(self.root,height=2,width=4,text="Yes",command=game.yes)
+        #self.but7.place(x=559,y=340)
+
+        #self.but8 = tk.Button(self.root,height=2,width=4,text="No",command=game.no)
+        #self.but8.place(x=629,y=340)
+
+        self.but9 = tk.Button(self.root,height=2,width=8,text="Enter",command=game.uin)
         self.but9.place(x=559,y=450)
 
         self.cpl = tk.Label(self.root,height=2,width=15,text=f"Combat Power:\n {self.cp}")
@@ -192,6 +193,7 @@ class Game():
         self.xpn = tk.Label(self.root, height=2, width=15, text=f"XP for next level:\n {self.acr}")
         self.xpn.place(x=559, y=250)
 
+
         self.output.insert(tk.END,"Welcome to Python-Cultivation!\n")
         self.output.insert(tk.END,"\n")
         self.output.insert(tk.END,"You open your eyes to a world with vast towering mountains,"
@@ -204,11 +206,14 @@ class Game():
 
     def yes(self):
         self.output.insert(tk.END,"Yes\n")
+
     def no(self):
         self.output.insert(tk.END,"No\n")
 
 
+
     def start(self):
+
         self.nm = self.uip
         self.uip = None
 
@@ -218,29 +223,46 @@ class Game():
 
         self.women = tk.Button(self.root,height=2,width=4,text="Women",command=game.gedw)
         self.women.place(x=629,y=380)
-        self.but9.config(command=lambda: game.uin(1))
+
     def gedm(self):
         self.gs = "Man"
         self.output.insert(tk.END, f"You are {self.nm} and you are a {self.gs}\n")
         self.man.destroy()
         self.women.destroy()
-        self.output.insert(tk.END,"From now on you can do whatever you want\n")
+        self.output.insert(tk.END,"From now on you can do whatever you want")
+
     def gedw(self):
         self.gs = "Women"
         self.output.insert(tk.END, f"You are {self.nm} and you are a {self.gs}\n")
         self.women.destroy()
         self.man.destroy()
-        self.output.insert(tk.END,"From now on you can do whatever you want\n")
+        self.output.insert(tk.END,"From now on you can do whatever you want")
+
+
+
 
 
     def sects(self,c):
-        game.bdel()
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 1:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
+
+
+
+
         if self.psc == None:
 
                 nsc = ["1 Heavenly Sword Sect\n","2 Demonic Blood Sect\n","3 Mystic Lotus Sect\n","4 Azure Cloud Sect\n"] #names of the sects
-                self.output.insert(tk.END,"\n")
-                self.output.insert(tk.END,"Which sect do you want to join?\n")
-                self.output.insert(tk.END,"\n")
+                self.output.insert(tk.END,"")
                 for sect in nsc:
                     self.output.insert(tk.END,sect)
                 self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=game.sdt1)
@@ -274,7 +296,18 @@ class Game():
             self.output.yview(tk.END)
 
             if c == 2:
-                game.bdel()
+                if self.bt1 == 1:
+                    self.butt1.destroy()
+                    self.bt1 = 0
+                if self.bt2 == 1:
+                    self.butt2.destroy()
+                    self.bt2 = 0
+                if self.bt3 == 1:
+                    self.butt3.destroy()
+                    self.bt3 = 0
+                if self.bt4 == 1:
+                    self.butt4.destroy()
+                    self.bt4 = 0
                 if self.sr == 0:
                     pass
                 elif self.sr == 1:
@@ -351,9 +384,25 @@ class Game():
                     self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.sri(3))
                     self.butt4.place(x=629, y=380)
                     self.bt4 = 1
-                    
+
+                #elif self.sr == 4:
+                 #   self.output.insert(tk.END,"You are currently a elder"
+                  #                            " but you can improve your rank in the sect, by doing:\n")
+                #elif self.sr == 5:
+                 #   self.output.insert(tk.END,"You are currently the sect leader\n")
             elif c == 1:
-                game.bdel()
+                if self.bt1 == 1:
+                    self.butt1.destroy()
+                    self.bt1 = 0
+                if self.bt2 == 1:
+                    self.butt2.destroy()
+                    self.bt2 = 0
+                if self.bt3 == 1:
+                    self.butt3.destroy()
+                    self.bt3 = 0
+                if self.bt4 == 1:
+                    self.butt4.destroy()
+                    self.bt4 = 0
                 if self.psc != None:
                     if self.otu == 1:
                         self.output.insert(tk.END,"You already reached max relations with your sect\n")
@@ -411,17 +460,29 @@ class Game():
                                 self.output.insert(tk.END,"You are already at the peak "
                                       "but the sect master was able to teach you so much that now you can break through on your own\n")
                                 self.cue += self.acr
+
+
                             self.otu = 1
 
         self.cp = self.rea * 100
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.kph.config(text=f"Cultivation Xp: {self.cue}")
-        self.xpn.config(text=f"XP for next level:\n {self.acr}")
         self.output.yview(tk.END)
 
 
     def sri(self,cr):
-        game.bdel()
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 1:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
         self.rp += 10
         if cr == 1:
             nr = "Inner disciple"
@@ -446,37 +507,55 @@ class Game():
     def sdt1(self):
             self.psc = "Heavenly Sword Sect"
             rws = self.sfr_HSS
-            self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
             self.sr = 1
             self.bt1 = 1
-            game.bdel()
+            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
+                try:
+                    bt.destroy()
+                except:
+                    pass
             self.output.yview(tk.END)
     def sdt2(self):
             self.psc = "Demonic Blood Sect"
             rws = self.sfr_DBS
-            self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
             self.sr = 1
-            game.bdel()
+            self.bt2 = 1
+            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
+                try:
+                    bt.destroy()
+                except:
+                    pass
             self.output.yview(tk.END)
     def sdt3(self):
             self.psc = "Mystic Lotus Sect"
             rws = self.sfr_MLS
-            self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
+
+            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
             self.sr = 1
-            game.bdel()
+            self.bt3 = 1
+            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
+                try:
+                    bt.destroy()
+                except:
+                    pass
             self.output.yview(tk.END)
     def sdt4(self):
             self.psc = "Azure Cloud Sect"
             rws = self.sfr_ALS
-            self.output.insert(tk.END,f"You joined {self.psc} as an outer disciple\n")
+            self.output.insert(tk.END,f"You joined {self.psc} as a outer disciple\n")
             self.sr = 1
-            game.bdel()
+            self.bt4 = 1
+            for bt in [self.butt1, self.butt2,self.butt3,self.butt4]:
+                try:
+                    bt.destroy()
+                except:
+                    pass
             self.output.yview(tk.END)
-        
 
     def realms(self):
         acr = self.cr*self.rea #required
-        self.xpn.config(text=f"XP for next level:\n {self.acr}")
         self.acr = acr
         if self.cue >= acr:
             self.rsn += 1
@@ -495,28 +574,9 @@ class Game():
             elif 46 <= self.rea <= 54:
                 self.step = "Void Refinement"
             if self.rsn == 10:
-                c = random.randint(1,100)
-                if c > 75:
-                    self.output.insert(tk.END,"You experienced a backlash and you could not advance \n")
-                    self.rsn -= 5
-                    self.rea -= 5
-                    self.xpn.config(text=f"XP for next level:\n {self.acr}")
-                    if 1 <= self.rea <= 9:
-                        self.step = "Qi Gathering"
-                    elif 10 <= self.rea <= 18:
-                        self.step = "Foundation Establishment"
-                    elif 19 <= self.rea <= 27:
-                        self.step = "Core Formation"
-                    elif 28 <= self.rea <= 36:
-                        self.step = "Nascent Soul"
-                    elif 37 <= self.rea <= 45:
-                        self.step = "Soul Formation"
-                    elif 46 <= self.rea <= 54:
-                        self.step = "Void Refinement"
-                elif c <=74:
-                    self.output.insert(tk.END,"You advance to the next realm\n")
-                    self.rsn = 1
-            self.output.insert(tk.END,f"Your cultivation is now the {self.rsn} of {self.step}\n")
+                self.output.insert(tk.END,"You advance to the next realm\n")
+                self.rsn = 1
+            self.output.insert(tk.END,f"Your  cultivation increased and reached the {self.rsn} of {self.step}\n")
         else: self.output.insert(tk.END,"You do not have enough Xp\n")
         self.cp = self.rea * 100
         self.xpn.config(text=f"XP for next level:\n {self.acr}")
@@ -525,66 +585,359 @@ class Game():
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.output.yview(tk.END)
 
+    def travel(self, t, wmove=None):
+        """
+        Show map and either:
+          - display movement buttons (when wmove is None), or
+          - perform the move (when wmove is 'up'/'down'/'left'/'right' or a visit option).
+        t is used to control special visit-menu behaviour (original code used t==0).
+        """
 
-    def travel(self,t):
-        game.bdel()
-        if t == 0:
-            self.output.insert(tk.END,"\n")
-            self.output.insert(tk.END,"You can visit:\n")
-            self.output.insert(tk.END,"\n")
-            self.output.insert(tk.END,"1 random Place\n")
-            self.output.insert(tk.END,"2 the village\n")
-            if self.rwsi > 25:
-                self.output.insert(tk.END,"3 sect middle\n")
-                self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=game.rdt3)
-                self.butt3.place(x=559, y=380)
-                self.bt3 = 1
-            if self.rwsi >= 100:
-                self.output.insert(tk.END,"4 a goldy artifact\n")
-                self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=game.rdt4)
-                self.butt4.place(x=629, y=380)
-                self.bt4 = 1
+        # --- Ensure button flag attributes exist (safe checks) ---
+        for i in range(1, 5):
+            if not hasattr(self, f"bt{i}"):
+                setattr(self, f"bt{i}", 0)
+            if not hasattr(self, f"butt{i}"):
+                setattr(self, f"butt{i}", None)
 
-            self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=game.rdt1)
-            self.butt1.place(x=559,y=340)
+        # --- Ensure we have a persistent map for the player ---
+        # Note: we do NOT use t==0 to force reload on movement. t==0 is reserved for visit-menu logic.
+        if not hasattr(self, "current_map") or getattr(self, "current_map") is None:
+            self.current_map = Map()
+            self.current_map.load_map()
+
+        # --- Clean up any old buttons to avoid duplicates (safe getattr) ---
+        for i in range(1, 5):
+            if getattr(self, f"bt{i}", 0) == 1:
+                btn = getattr(self, f"butt{i}", None)
+                if btn is not None:
+                    try:
+                        btn.destroy()
+                    except Exception:
+                        pass
+                setattr(self, f"bt{i}", 0)
+                setattr(self, f"butt{i}", None)
+
+        # --- Show current map ---
+        self.output.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
+        self.output.insert(tk.END, "Where do you want to move?\n")
+
+        # --- If no movement chosen yet, create the directional buttons and (if t==0) the visit options ---
+        if wmove is None:
+            # Create directional movement buttons.
+            # IMPORTANT: pass t=1 for the button callbacks so clicks DON'T trigger map reload
+            self.butt1 = tk.Button(self.root, height=2, width=6, text="Up",
+                                   command=lambda: self.travel(1, "up"))
+            self.butt1.place(x=559, y=340)
             self.bt1 = 1
 
-            self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=game.rdt2)
-            self.butt2.place(x=629,y=340)
+            self.butt2 = tk.Button(self.root, height=2, width=6, text="Down",
+                                   command=lambda: self.travel(1, "down"))
+            self.butt2.place(x=629, y=340)
             self.bt2 = 1
-            self.output.yview(tk.END)
 
+            self.butt3 = tk.Button(self.root, height=2, width=6, text="Left",
+                                   command=lambda: self.travel(1, "left"))
+            self.butt3.place(x=559, y=380)
+            self.bt3 = 1
+
+            self.butt4 = tk.Button(self.root, height=2, width=6, text="Right",
+                                   command=lambda: self.travel(1, "right"))
+            self.butt4.place(x=629, y=380)
+            self.bt4 = 1
+
+            # If original caller asked t==0, show visit menu instead of directional buttons.
+            # (Do NOT overwrite `t` above — we need the original value.)
+            if t == 0:
+                # destroy directional buttons (we just created them) to show visit options instead
+                for i in range(1, 5):
+                    if getattr(self, f"bt{i}", 0) == 1:
+                        btn = getattr(self, f"butt{i}", None)
+                        if btn is not None:
+                            try:
+                                btn.destroy()
+                            except Exception:
+                                pass
+                        setattr(self, f"bt{i}", 0)
+                        setattr(self, f"butt{i}", None)
+
+                self.output.insert(tk.END, "\nYou can visit:\n\n")
+                self.output.insert(tk.END, "1 - random Place\n")
+                self.output.insert(tk.END, "2 - the village\n")
+
+                # Option 1 and 2 buttons
+                self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=self.rdt1)
+                self.butt1.place(x=559, y=340)
+                self.bt1 = 1
+
+                self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=self.rdt2)
+                self.butt2.place(x=629, y=340)
+                self.bt2 = 1
+
+                # Option 3 (requires rwsi > 25)
+                if getattr(self, "rwsi", 0) > 25:
+                    self.output.insert(tk.END, "3 - sect middle\n")
+                    self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=self.rdt3)
+                    self.butt3.place(x=559, y=380)
+                    self.bt3 = 1
+
+                # Option 4 (requires rwsi >= 100)
+                if getattr(self, "rwsi", 0) >= 100:
+                    self.output.insert(tk.END, "4 - a goldy artifact\n")
+                    self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=self.rdt4)
+                    self.butt4.place(x=629, y=380)
+                    self.bt4 = 1
+
+            self.output.yview(tk.END)
+            return  # nothing to do until the player clicks a button
+
+        # --- If a movement (wmove) was provided, perform it ---
+        move_result = self.current_map.move_player(wmove)
+        self.output.insert(tk.END, f"\nYou moved: {move_result}\n")
+        self.output.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
+        try:
+            self.current_map.save_map("Main_Map.txt")
+        except Exception:
+            self.output.insert(tk.END, "Warning: failed to save map.\n")
+
+        self.output.yview(tk.END)
 
     def rdt1(self):
                 self.location = "random Place"
                 self.bls += 50
                 self.output.insert(tk.END,"You are now at a random place\n")
-                game.bdel()
+                self.bt1 = 0
+                for bt in [self.butt1,self.butt2]:
+                    try:
+                        bt.destroy()
+                    except: pass
+                if self.bt3 == 1:
+                    self.butt3.destroy()
+                    self.bt3 = 0
+                if self.bt4 == 1:
+                    self.butt4.destroy()
+                    self.bt4 = 0
+
                 self.output.yview(tk.END)
+
     def rdt2(self):
+                event = random.random()
                 self.location = "Village"
                 self.output.insert(tk.END,f"You went to the {self.location}\n")
-                game.bdel()
+                self.bt2 = 1
+                for bt in [self.butt1,self.butt2]:
+                    try:
+                        bt.destroy()
+                    except: pass
+                if self.bt3 == 1:
+                    self.butt3.destroy()
+                    self.bt3 = 0
+                if self.bt4 == 1:
+                    self.butt4.destroy()
+                    self.bt4 = 0
                 self.bls += 100
                 self.output.yview(tk.END)
+                #if event > 0.75:
+                 #   k = random.random()
+                  #  if k <= 0.5:
+                   #     self.output.insert(tk.END,"The village is getting attacked currently do you want to help?\n")
+                     #   self.output.insert(tk.END,"\n")
+                    #    print("Yes or No?")
+                      #  l = input("Choice:")
+                       # if l == "Yes":
+                        #    r = random.random()
+                         #   if r <= 0.5:
+                          #      "You helped kill the bands and the villager thanked you"
+                           # else:
+                            #    print("You were unable to do anything against the bandits, but they let you be")
+                #        elif l == "No":
+                 #           print("You leave the village alone,"
+                  #                " when you came back 1 hour later the village was in ruin and on fire")
+                   #     else:
+                    #        print("Not a valid option,"
+                     #             " please be careful while writing and also look if you write in caps"), game.control()
+
+                #    elif k > 0.5:
+                 #       print("The village is currently holding a celebration do you wish to join?")
+                  #      print("")
+                   #     print("Yes or No?")
+                    #    o = input("Choice:")
+                     #   if o == "Yes":
+                      #      print("You had much fun with the villagers and celebrated deep into the night")
+                       # elif o == "No":
+                        #    print("You ignored the celebration and continue with your work alone")
+                #        else:
+                 #           print("Not a valid option,"
+                  #                " please be careful while writing and also look if you write in caps"), game.control()
+                #else:
+                 #   print("Nothing is currently happening in the village.")
+
+
+
     def rdt3(self):
                 self.location = "sect middle"
                 self.output.insert(tk.END,f"You are at the {self.location}\n")
                 self.bls += 200
-                game.bdel()
+                for bt in [self.butt1,self.butt2]:
+                    try:
+                        bt.destroy()
+                    except: pass
+                if self.bt3 == 1:
+                    self.butt3.destroy()
+                    self.bt3 = 0
+                if self.bt4 == 1:
+                    self.butt4.destroy()
+                    self.bt4 = 0
                 self.output.yview(tk.END)
     def rdt4(self):
                 self.location = "godly artifact"
                 self.output.insert(tk.END,f"You are at the {self.location}\n")
                 self.bls += 1000
-                game.bdel()
+                for bt in [self.butt1,self.butt2]:
+                    try:
+                        bt.destroy()
+                    except: pass
+                if self.bt3 == 1:
+                    self.butt3.destroy()
+                    self.bt3 = 0
+                if self.bt4 == 1:
+                    self.butt4.destroy()
+                    self.bt4 = 0
                 self.output.yview(tk.END)
-        
+
+    def control(self):
+        self.cp = self.rea * 100
+        while True:
+            acr = self.cr * self.rea # required
+            self.acr = acr
+            print("")
+            print("What do you want to do?")
+            print("")
+            print("1 Go to a place")
+            print("2 Cultivate")
+            print("3 try to break through")
+            if self.psc == None:
+                print("4 join a sect")
+            elif self.otu < 1:
+                print(f"4 Improve relations with {self.psc}")
+            print("5 fight")
+            if self.step == "Qi Gathering":
+                print("6 improve Spirit Sea")
+                self.cp += self.sps
+                ch6 = 1 # just means that the realm is this and is used for the choice thing
+            elif self.step == "Foundation Establishment":
+                print("6 improve quality of Qi")
+                self.cp *= self.qq / 100
+                ch6 = 2
+            elif self.step == "Core Formation":
+                print("6 Condense Core")
+                self.cp *= self.pc
+                ch6 = 3
+            elif self.step == "Nascent Soul":
+                print("6 Improve Nascent Soul")
+                self.cp += self.ins * 1000
+                ch6 = 4
+            elif self.step == "Soul Formation":
+                print("6 expand your domain")
+                self.cp *= self.exd
+                ch6 = 5
+            elif self.step == "Void Refinement":
+                print("6 improve Dao Connection")
+                self.cp *= self.dac
+                ch6 = 6
+            print("")
+            print(f"Your cultivation is {self.rsn} in the {self.step} realm")
+            print(f"Cultivation Xp: {self.cue}")
+            print(f"required for next level: {self.acr}")
+            print(f"Your Combat Power is {self.cp}")
+            d = int(input("Choice:"))
+
+            if d == 1:
+                game.travel()
+
+            elif d == 2:
+                print("How long do you want to cultivate?")
+                print("")
+                print("1 10 days")
+                print("2 50 days")
+                print("3 100 days")
+                z = int(input("Choice:"))
+                if z == 1:
+                    self.ct = 10
+                    game.time()
+                elif z == 2:
+                    self.ct = 50
+                    game.time()
+                elif z == 3:
+                    self.ct = 100
+                    game.time()
+            elif d == 3:
+                game.realms()
+            elif d == 4:
+                game.sects()
+            elif d == 5:
+                game.combat()
+            elif d == 6:
+                sc = random.randrange(10, 50)
+                qi = sc / 10
+                if ch6 == 1:
+                    self.sps += sc
+                    print(f"improved your spirit sea by {sc} your spirit sea now has a size of {self.sps}")
+                elif ch6 == 2:
+                    if self.qq == 100:
+                        print("You already have the purest Qi")
+                    elif self.qq < 100:
+                        self.qq += qi
+                        print(f"Your Qi quality improved by {qi} and now has a purity of {self.qq}%")
+                        if self.qq >= 100:
+                            print("You reached the maximum purity of your Qi")
+                            self.qq = 100
+                elif ch6 == 3:
+                    if self.pc >= 100:
+                        print("You already completed your core")
+                    elif self.pc < 100:
+                        self.pc += qi
+                        print(f"Your Core has improved by {qi} and now is to {self.pc} completed")
+                        if self.pc >= 100:
+                            print("You completed your core")
+                            self.pc = 100
+                elif ch6 == 4:
+                    self.ins += sc
+                    print(f"The size of your Nascent Soul increased by {sc} meter"
+                          f" and has now reached a height of {self.ins} meter")
+                elif ch6 == 5:
+                    self.exd += sc
+                    print(f"The size of your domain increased by {sc} meter"
+                          f"and has now reached a size of {self.exd} meter")
+                elif ch6 == 6:
+                    self.dac += qi
+                    print(f"Your connection with the dao increased by {qi} "
+                          f"and has now reached a connection of {self.dac}%")
+                    if self.dac >= 100:
+                        print("You reached the dao and are now an immortal")
+                        print("")
+                        print("I hope you liked my game")
+                        break
+
+
+
+
 
     def time(self,t,c):
-        game.bdel()
+        if self.bt1 == 1:
+            self.butt1.destroy()
+            self.bt1 = 0
+        if self.bt2 == 2:
+            self.butt2.destroy()
+            self.bt2 = 0
+        if self.bt3 == 1:
+            self.butt3.destroy()
+            self.bt3 = 0
+            self.bt3 = 0
+        if self.bt4 == 1:
+            self.butt4.destroy()
+            self.bt4 = 0
         if c == 0:
-            self.output.insert(tk.END,"\n")
             self.output.insert(tk.END,"How long do you want to cultivate?\n")
             self.output.insert(tk.END,"\n")
             self.output.insert(tk.END,"1 10 days \n")
@@ -594,19 +947,15 @@ class Game():
 
             self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.time(10,1))
             self.butt1.place(x=559, y=340)
-            self.bt1 = 1
 
             self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.time(25,1))
             self.butt2.place(x=629, y=340)
-            self.bt2 = 1
 
             self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.time(50,1))
             self.butt3.place(x=559, y=380)
-            self.bt3 = 1
 
             self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.time(100,1))
             self.butt4.place(x=629, y=380)
-            self.bt4 = 1
         else:
 
             day = 1
@@ -629,6 +978,7 @@ class Game():
                         pass
             self.output.insert(tk.END, f"You completed your cultivation\n")
         self.output.yview(tk.END)
+
 
 
 game = Game()
