@@ -1,16 +1,17 @@
-# map.py
+# 0 plains
+# 1 forrest
+# 2 city
+# 3 high mountains
+# 4 event place
+
 
 class Map:
     def __init__(self):
-        # terrain is a 2D list of chars '0','1','2',...
         self.terrain = []
-        # player's position as (row, col) or None
         self.player_pos = None
-        # which terrain digits are impassable
-        self.impassable = {'1', '3'}  # mountains and high mountains
+        self.impassable = {'3'}
 
     def load_map(self, filename="Main_Map.txt"):
-        """Load file, parse into terrain grid, and find player start (9)."""
         with open(filename, "r", encoding="utf-8") as f:
             lines = [ln.rstrip("\n") for ln in f.readlines()]
 
