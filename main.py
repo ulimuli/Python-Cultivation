@@ -42,7 +42,8 @@ class Game():
         self.bt3 = 0
         self.bt4 = 0
         self.sr = 0 #sect rank
-        self.rp = int(0) #reputation in sect
+        self.rp = int(0) #reputation in sects
+        self.starting_map_token = 1
 
     def del_butn(self):
         try:
@@ -150,8 +151,10 @@ class Game():
         self.root.title("Python-Cultivation")
         self.cp = self.rea * 100
 
-        self.output = tk.Text(self.root, height=34, width=79)
+        self.output = tk.Text(self.root, height=14, width=79)
         self.output.place(x=0,y=0)
+        self.map = tk.Text(self.root, height=19, width=79)
+        self.map.place(x=0,y=200)
 
         self.inp = tk.Entry(self.root,width=61)
         self.inp.place(x=0,y=460)
@@ -195,6 +198,8 @@ class Game():
         self.xpn = tk.Label(self.root, height=2, width=15, text=f"XP for next level:\n {self.acr}")
         self.xpn.place(x=559, y=250)
 
+        if self.starting_map_token == 1:
+            game.travel(start_call=self.starting_map_token)
 
         self.output.insert(tk.END,"Welcome to Python-Cultivation!\n")
         self.output.insert(tk.END,"\n")
@@ -203,6 +208,7 @@ class Game():
               " The air is filled with Qi, an unseen force that allows you to cultivate.\n")
         self.output.insert(tk.END,"\n")
         self.output.insert(tk.END,"What is your name in this vast world\n")
+
         self.root.mainloop()
 
 
@@ -523,7 +529,7 @@ class Game():
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.output.yview(tk.END)
 
-    def travel(self, t, wmove=None):
+    def travel(self, t=None, wmove=None, start_call=None):
         game.del_butn()
         """
         Show map and either:
@@ -540,7 +546,6 @@ class Game():
                 setattr(self, f"butt{i}", None)
 
         # --- Ensure we have a persistent map for the player ---
-        # Note: we do NOT use t==0 to force reload on movement. t==0 is reserved for visit-menu logic.
         if not hasattr(self, "current_map") or getattr(self, "current_map") is None:
             self.current_map = Map()
             self.current_map.load_map()
@@ -557,89 +562,95 @@ class Game():
                 setattr(self, f"bt{i}", 0)
                 setattr(self, f"butt{i}", None)
 
-        # --- Show current map ---
-        self.output.insert(tk.END,"\n")
-        self.output.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
-        self.output.insert(tk.END, "\n")
-        self.output.insert(tk.END, "Where do you want to move?\n")
+        if start_call == 1:
+            self.map.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
+            self.starting_map_token = 0
+        else:
 
-        # --- If no movement chosen yet, create the directional buttons and (if t==0) the visit options ---
-        if wmove is None:
-            # Create directional movement buttons.
-            # IMPORTANT: pass t=1 for the button callbacks so clicks DON'T trigger map reload
-            self.butt1 = tk.Button(self.root, height=2, width=6, text="Up",
-                                   command=lambda: self.travel(1, "up"))
-            self.butt1.place(x=559, y=340)
-            self.bt1 = 1
+            # --- Show current map prompt ---
+            self.output.insert(tk.END, "\n")
+            self.output.insert(tk.END, "Where do you want to move?\n")
 
-            self.butt2 = tk.Button(self.root, height=2, width=6, text="Down",
-                                   command=lambda: self.travel(1, "down"))
-            self.butt2.place(x=629, y=340)
-            self.bt2 = 1
-
-            self.butt3 = tk.Button(self.root, height=2, width=6, text="Left",
-                                   command=lambda: self.travel(1, "left"))
-            self.butt3.place(x=559, y=380)
-            self.bt3 = 1
-
-            self.butt4 = tk.Button(self.root, height=2, width=6, text="Right",
-                                   command=lambda: self.travel(1, "right"))
-            self.butt4.place(x=629, y=380)
-            self.bt4 = 1
-
-            # If original caller asked t==0, show visit menu instead of directional buttons.
-            # (Do NOT overwrite `t` above — we need the original value.)
-            if t == 0:
-                # destroy directional buttons (we just created them) to show visit options instead
-                for i in range(1, 5):
-                    if getattr(self, f"bt{i}", 0) == 1:
-                        btn = getattr(self, f"butt{i}", None)
-                        if btn is not None:
-                            try:
-                                btn.destroy()
-                            except Exception:
-                                pass
-                        setattr(self, f"bt{i}", 0)
-                        setattr(self, f"butt{i}", None)
-
-                self.output.insert(tk.END, "\nYou can visit:\n\n")
-                self.output.insert(tk.END, "1 - random Place\n")
-                self.output.insert(tk.END, "2 - the village\n")
-
-                # Option 1 and 2 buttons
-                self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=self.rdt1)
+            # --- If no movement chosen yet, create the directional buttons and (if t==0) the visit options ---
+            if wmove is None:
+                # Create directional movement buttons.
+                # IMPORTANT: pass t=1 for the button callbacks so clicks DON'T trigger map reload
+                self.butt1 = tk.Button(self.root, height=2, width=6, text="Up",
+                                       command=lambda: self.travel(1, "up"))
                 self.butt1.place(x=559, y=340)
                 self.bt1 = 1
 
-                self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=self.rdt2)
+                self.butt2 = tk.Button(self.root, height=2, width=6, text="Down",
+                                       command=lambda: self.travel(1, "down"))
                 self.butt2.place(x=629, y=340)
                 self.bt2 = 1
 
-                # Option 3 (requires rwsi > 25)
-                if getattr(self, "rwsi", 0) > 25:
-                    self.output.insert(tk.END, "3 - sect middle\n")
-                    self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=self.rdt3)
-                    self.butt3.place(x=559, y=380)
-                    self.bt3 = 1
+                self.butt3 = tk.Button(self.root, height=2, width=6, text="Left",
+                                       command=lambda: self.travel(1, "left"))
+                self.butt3.place(x=559, y=380)
+                self.bt3 = 1
 
-                # Option 4 (requires rwsi >= 100)
-                if getattr(self, "rwsi", 0) >= 100:
-                    self.output.insert(tk.END, "4 - a goldy artifact\n")
-                    self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=self.rdt4)
-                    self.butt4.place(x=629, y=380)
-                    self.bt4 = 1
+                self.butt4 = tk.Button(self.root, height=2, width=6, text="Right",
+                                       command=lambda: self.travel(1, "right"))
+                self.butt4.place(x=629, y=380)
+                self.bt4 = 1
 
-            self.output.yview(tk.END)
-            return  # nothing to do until the player clicks a button
+                # If original caller asked t==0, show visit menu instead of directional buttons.
+                if t == 0:
+                    # destroy directional buttons (we just created them) to show visit options instead
+                    for i in range(1, 5):
+                        if getattr(self, f"bt{i}", 0) == 1:
+                            btn = getattr(self, f"butt{i}", None)
+                            if btn is not None:
+                                try:
+                                    btn.destroy()
+                                except Exception:
+                                    pass
+                            setattr(self, f"bt{i}", 0)
+                            setattr(self, f"butt{i}", None)
+
+                    self.output.insert(tk.END, "\nYou can visit:\n\n")
+                    self.output.insert(tk.END, "1 - random Place\n")
+                    self.output.insert(tk.END, "2 - the village\n")
+
+                    # Option 1 and 2 buttons
+                    self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=self.rdt1)
+                    self.butt1.place(x=559, y=340)
+                    self.bt1 = 1
+
+                    self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=self.rdt2)
+                    self.butt2.place(x=629, y=340)
+                    self.bt2 = 1
+
+                    # Option 3 (requires rwsi > 25)
+                    if getattr(self, "rwsi", 0) > 25:
+                        self.output.insert(tk.END, "3 - sect middle\n")
+                        self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=self.rdt3)
+                        self.butt3.place(x=559, y=380)
+                        self.bt3 = 1
+
+                    # Option 4 (requires rwsi >= 100)
+                    if getattr(self, "rwsi", 0) >= 100:
+                        self.output.insert(tk.END, "4 - a goldy artifact\n")
+                        self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=self.rdt4)
+                        self.butt4.place(x=629, y=380)
+                        self.bt4 = 1
+
+                # <<-- PLACE THE RETURN HERE so we only exit when we created buttons (no wmove provided) -->
+                self.output.yview(tk.END)
+                return  # nothing to do until the player clicks a button
+
+            # If we get here, wmove is not None so perform the move
 
         # --- If a movement (wmove) was provided, perform it ---
-        move_result = self.current_map.move_player(wmove)
-        self.output.insert(tk.END, f"\nYou moved: {move_result}\n")
-        self.output.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
-        try:
-            self.current_map.save_map("Main_Map.txt")
-        except Exception:
-            self.output.insert(tk.END, "Warning: failed to save map.\n")
+        if wmove is not None:
+            move_result = self.current_map.move_player(wmove)
+            self.map.delete("1.0", tk.END)
+            self.map.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
+            try:
+                self.current_map.save_map("Main_Map.txt")
+            except Exception:
+                self.output.insert(tk.END, "Warning: failed to save map.\n")
 
         self.output.yview(tk.END)
 
