@@ -21,7 +21,7 @@ class Map:
         for r, line in enumerate(lines):
             row = []
             for c, ch in enumerate(line):
-                if ch == '9':
+                if ch == '*':
                     # store underlying terrain as '0' by default,
                     # and record player position
                     row.append('0')
@@ -29,14 +29,21 @@ class Map:
                 else:
                     row.append(ch)
             self.terrain.append(row)
-
         return self.terrain
+
+    def get_player_terrain(self):
+        """Return the terrain char (e.g. '0'..'4') under the player or None."""
+        if self.player_pos is None:
+            return None
+        r, c = self.player_pos
+        return self.terrain[r][c]
 
     def make_grid(self):
         """Return a copy of the terrain grid (2D list of chars)."""
         return [row[:] for row in self.terrain]
 
     def find_player(self):
+        print(self.player_pos)
         return self.player_pos
 
     def can_move_to(self, r, c):
@@ -88,14 +95,20 @@ class Map:
         for r, row in enumerate(self.terrain):
             chars = row[:]  # copy
             if self.player_pos and self.player_pos[0] == r:
-                # insert '9' at player column
+                # insert '*' at player column
                 pc = self.player_pos[1]
-                chars[pc] = '9'
+                chars[pc] = '*'
             out.append(''.join(chars))
         return out
 
     def save_map(self, filename="Main_Map_out.txt"):
-        """Write the displayed map (with '9') to a file."""
+        """Write the displayed map (with '*') to a file."""
         with open(filename, "w", encoding="utf-8") as f:
             for line in self.display_map():
                 f.write(line + "\n")
+
+
+mas = Map()
+mas.load_map()
+mas.find_player()
+print(mas.get_player_terrain())

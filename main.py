@@ -44,7 +44,6 @@ class Game():
         self.sr = 0 #sect rank
         self.rp = int(0) #reputation in sects
         self.starting_map_token = 1
-
     def del_butn(self):
         try:
             self.butt1.destroy()
@@ -153,7 +152,8 @@ class Game():
 
         self.output = tk.Text(self.root, height=14, width=79)
         self.output.place(x=0,y=0)
-        self.map = tk.Text(self.root, height=19, width=79)
+
+        self.map = tk.Text(self.root, height=18, width=79)
         self.map.place(x=0,y=200)
 
         self.inp = tk.Entry(self.root,width=61)
@@ -549,6 +549,7 @@ class Game():
         if not hasattr(self, "current_map") or getattr(self, "current_map") is None:
             self.current_map = Map()
             self.current_map.load_map()
+            print(self.current_map.get_player_terrain())
 
         # --- Clean up any old buttons to avoid duplicates (safe getattr) ---
         for i in range(1, 5):
@@ -570,7 +571,7 @@ class Game():
             # --- Show current map prompt ---
             self.output.insert(tk.END, "\n")
             self.output.insert(tk.END, "Where do you want to move?\n")
-
+            print(self.current_map.get_player_terrain())
             # --- If no movement chosen yet, create the directional buttons and (if t==0) the visit options ---
             if wmove is None:
                 # Create directional movement buttons.
@@ -647,6 +648,14 @@ class Game():
             move_result = self.current_map.move_player(wmove)
             self.map.delete("1.0", tk.END)
             self.map.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
+            if int(self.current_map.get_player_terrain()) == 0:
+                self.output.insert(tk.END,"You arrived in Plains.\n")
+            elif int(self.current_map.get_player_terrain()) == 1:
+                self.output.insert(tk.END, "You arrived in a Forrest.\n")
+            elif int(self.current_map.get_player_terrain()) == 2:
+                self.output.insert(tk.END, "You arrived in a City.\n")
+            elif int(self.current_map.get_player_terrain()) == 3:
+                self.output.insert(tk.END, "You should not be able to be here.\n")
             try:
                 self.current_map.save_map("Main_Map.txt")
             except Exception:
