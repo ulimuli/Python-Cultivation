@@ -44,6 +44,9 @@ class Game():
         self.sr = 0 #sect rank
         self.rp = int(0) #reputation in sects
         self.starting_map_token = 1
+        self.day = int(1)
+        self.month = int(1)
+        self.year = int(103)
     def del_butn(self):
         try:
             self.butt1.destroy()
@@ -52,7 +55,7 @@ class Game():
             self.butt4.destroy()
             print("Del_Button just works")
         except:
-            print("OK del-button seems to do something wrong")
+            print("OK del-button seems to do nothing")
 
     def create_butn(self):
         pass
@@ -146,7 +149,7 @@ class Game():
     def window(self):
         game.del_butn()
         self.root = tk.Tk()
-        self.root.geometry("700x500")
+        self.root.geometry("700x600")
         self.root.title("Python-Cultivation")
         self.cp = self.rea * 100
 
@@ -171,7 +174,7 @@ class Game():
         self.but4 = tk.Button(self.root,height=2,width=4,text="Stats")
         self.but4.place(x=629,y=40)
 
-        self.but5 = tk.Button(self.root,height=2,width=4,text="Cultivate",command=lambda: game.time(0,0))
+        self.but5 = tk.Button(self.root,height=2,width=4,text="Cultivate",command=lambda: game.cultivate(0,0))
         self.but5.place(x=559,y=80)
 
         self.but6 = tk.Button(self.root,height=2,width=4,text="Ascension",command=game.realms)
@@ -186,6 +189,51 @@ class Game():
         self.but9 = tk.Button(self.root,height=2,width=8,text="Enter",command=game.uin)
         self.but9.place(x=559,y=450)
 
+        self.buttime1 = tk.Button(self.root,height=2,width=5,text="1 Second",command="")
+        self.buttime1.place(x=30,y=490)
+
+        self.buttime2 = tk.Button(self.root, height=2, width=5, text="5 Seconds", command="")
+        self.buttime2.place(x=110, y=490)
+
+        self.buttime3 = tk.Button(self.root, height=2, width=5, text="30 Seconds", command="")
+        self.buttime3.place(x=190, y=490)
+
+        self.buttime4 = tk.Button(self.root, height=2, width=5, text="1 Minute", command="")
+        self.buttime4.place(x=270, y=490)
+
+        self.buttime5 = tk.Button(self.root, height=2, width=5, text="5 Minutes", command="")
+        self.buttime5.place(x=350, y=490)
+
+        self.buttime6 = tk.Button(self.root, height=2, width=5, text="30 Minutes", command="")
+        self.buttime6.place(x=430, y=490)
+
+        self.buttime7 = tk.Button(self.root, height=2, width=5, text="1 Hour", command="")
+        self.buttime7.place(x=510, y=490)
+
+        self.buttime8 = tk.Button(self.root, height=2, width=5, text="5 Hours", command="")
+        self.buttime8.place(x=590, y=490)
+
+        self.buttime9 = tk.Button(self.root, height=2, width=5, text="1 day", command=lambda: game.time(1))
+        self.buttime9.place(x=70, y=540)
+
+        self.buttime10 = tk.Button(self.root, height=2, width=5, text="5 days", command=lambda: game.time(5))
+        self.buttime10.place(x=150, y=540)
+
+        self.buttime11 = tk.Button(self.root, height=2, width=5, text="1 Month", command=lambda: game.time(30))
+        self.buttime11.place(x=230, y=540)
+
+        self.buttime12 = tk.Button(self.root, height=2, width=5, text="6 Months", command=lambda: game.time(30*6))
+        self.buttime12.place(x=310, y=540)
+
+        self.buttime13 = tk.Button(self.root, height=2, width=5, text="1 Year", command=lambda: game.time(30*12))
+        self.buttime13.place(x=390, y=540)
+
+        self.buttime14 = tk.Button(self.root, height=2, width=5, text="10 Years", command=lambda: game.time(30*12*10))
+        self.buttime14.place(x=470, y=540)
+
+        self.buttime15 = tk.Button(self.root, height=2, width=5, text="50 Years", command=lambda: game.time(30*12*50))
+        self.buttime15.place(x=550, y=540)
+
         self.cpl = tk.Label(self.root,height=2,width=15,text=f"Combat Power:\n {self.cp}")
         self.cpl.place(x=559,y=120)
 
@@ -197,6 +245,9 @@ class Game():
 
         self.xpn = tk.Label(self.root, height=2, width=15, text=f"XP for next level:\n {self.acr}")
         self.xpn.place(x=559, y=250)
+
+        self.date = tk.Label(self.root, height=2, width=15, text=f"{self.day}.{self.month}.{self.year} ")
+        self.date.place(x=559, y=290)
 
         if self.starting_map_token == 1:
             game.travel(start_call=self.starting_map_token)
@@ -847,7 +898,7 @@ class Game():
 
 
 
-    def time(self,t,c):
+    def cultivate(self,t,c):
         game.del_butn()
         if c == 0:
             self.output.insert(tk.END,"How long do you want to cultivate?\n")
@@ -891,6 +942,25 @@ class Game():
             self.output.insert(tk.END, f"You completed your cultivation\n")
         self.output.yview(tk.END)
 
+    def time(self, time=None):
+        print("time works")
+        if time is None:
+            print("Time do not do that")
+        else:
+            new_time = time
+            while new_time > 0:
+                new_time -= 1
+                self.day += 1
+                if self.day == 31:
+                    self.month += 1
+                    self.day = 1
+                    if self.month == 13:
+                        self.month = 1
+                        self.year += 1
+
+                print(self.day)
+                self.date.config(text=f"{self.day}.{self.month}.{self.year} ")
+                self.output.yview(tk.END)
 
 
 game = Game()
