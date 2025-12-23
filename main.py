@@ -8,7 +8,7 @@ from Map import Map
 class Game():
     def __init__(self):
         self.location = None
-        self.bls = int(100) #speed of cultivation
+        self.bls = int(100) #speed of cultivation percent
         self.cue = int(0) # cultivation *points*
         self.ct = int(0) #time picked to train
         self.rea =int(1) #cultivation realm in number
@@ -47,6 +47,8 @@ class Game():
         self.day = int(1)
         self.month = int(1)
         self.year = int(103)
+        self.btc = int(5) #base travel cost time
+        self.dct = int(0) #daily cultivation time
     def del_butn(self):
         try:
             self.butt1.destroy()
@@ -288,14 +290,14 @@ class Game():
         self.output.insert(tk.END, f"You are {self.nm} and you are a {self.gs}\n")
         self.man.destroy()
         self.women.destroy()
-        self.output.insert(tk.END,"From now on you can do whatever you want")
+        self.output.insert(tk.END,"From now on you can do whatever you want\n")
 
     def gedw(self):
         self.gs = "Women"
         self.output.insert(tk.END, f"You are {self.nm} and you are a {self.gs}\n")
         self.women.destroy()
         self.man.destroy()
-        self.output.insert(tk.END,"From now on you can do whatever you want")
+        self.output.insert(tk.END,"From now on you can do whatever you want\n")
 
 
 
@@ -571,7 +573,7 @@ class Game():
             if self.rsn == 10:
                 self.output.insert(tk.END,"You advance to the next realm\n")
                 self.rsn = 1
-            self.output.insert(tk.END,f"Your  cultivation increased and reached the {self.rsn} of {self.step}\n")
+            self.output.insert(tk.END,f"Your cultivation increased and reached the {self.rsn} of {self.step}\n")
         else: self.output.insert(tk.END,"You do not have enough Xp\n")
         self.cp = self.rea * 100
         self.xpn.config(text=f"XP for next level:\n {self.acr}")
@@ -580,7 +582,7 @@ class Game():
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.output.yview(tk.END)
 
-    def travel(self, t=None, wmove=None, start_call=None):
+    def travel(self, t=None, wmove=None, start_call=None): #this code part was mostly written by ai
         game.del_butn()
         """
         Show map and either:
@@ -699,14 +701,15 @@ class Game():
             move_result = self.current_map.move_player(wmove)
             self.map.delete("1.0", tk.END)
             self.map.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
+            game.time(5)
             if int(self.current_map.get_player_terrain()) == 0:
-                self.output.insert(tk.END,"You arrived in Plains.\n")
+                self.output.insert(tk.END,"You traveled for 5 days and arrived in Plains.\n")
             elif int(self.current_map.get_player_terrain()) == 1:
-                self.output.insert(tk.END, "You arrived in a Forrest.\n")
+                self.output.insert(tk.END, "You traveled for 5 days and arrived in a Forrest.\n")
             elif int(self.current_map.get_player_terrain()) == 2:
-                self.output.insert(tk.END, "You arrived in a City.\n")
+                self.output.insert(tk.END, "You traveled for 5 days and arrived in a City.\n")
             elif int(self.current_map.get_player_terrain()) == 3:
-                self.output.insert(tk.END, "You should not be able to be here.\n")
+                self.output.insert(tk.END, "You traveled for 5 days and should not be able to be here.\n")
             try:
                 self.current_map.save_map("Main_Map.txt")
             except Exception:
@@ -899,47 +902,42 @@ class Game():
 
 
     def cultivate(self,t,c):
-        game.del_butn()
-        if c == 0:
-            self.output.insert(tk.END,"How long do you want to cultivate?\n")
-            self.output.insert(tk.END,"\n")
-            self.output.insert(tk.END,"1 10 days \n")
-            self.output.insert(tk.END,"2 25 days \n")
-            self.output.insert(tk.END,"3 50 days \n")
-            self.output.insert(tk.END,"4 100 days \n")
 
-            self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.time(10,1))
+        if c == 0:
+            game.del_butn()
+            self.output.insert(tk.END,"How long do you want to cultivate each day?\n")
+            self.output.insert(tk.END,"\n")
+            self.output.insert(tk.END,"(1) 1 Hour\n")
+            self.output.insert(tk.END,"(2) 5 Hours \n")
+            self.output.insert(tk.END,"(3) 10 Hours\n")
+            self.output.insert(tk.END,"(4) 18 Hours\n")
+
+            self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.cultivate(1,1))
             self.butt1.place(x=559, y=340)
 
-            self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.time(25,1))
+            self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.cultivate(5,1))
             self.butt2.place(x=629, y=340)
 
-            self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.time(50,1))
+            self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.cultivate(10,1))
             self.butt3.place(x=559, y=380)
 
-            self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.time(100,1))
+            self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.cultivate(18,1))
             self.butt4.place(x=629, y=380)
-        else:
+        elif c == 1:
+            game.del_butn()
+            game.del_butn()
+            self.output.insert(tk.END, f"You decided to cultivate {t} hours a day\n")
+            self.dct = t
 
-            day = 1
-            while t >0:
-                l = self.bls * 10
-                day += 1
-                t -= 1
-                b = random.randint(0,200)
-                if b < 1:
-                    self.output.insert(tk.END, f"You experienced backlash and lost {l}\n")
-                    self.cue -= l
-                self.cue += self.bls
-
+        elif c == 2:
+            try:
+                ctpd = self.dct
+                dc = self.bls * ctpd / 100
+                self.cue += dc
                 self.kph.config(text=f"Cultivation Xp: {self.cue}")
-                c = 0
-                for bt in [self.butt1, self.butt2, self.butt3, self.butt4]:
-                    try:
-                        bt.destroy()
-                    except:
-                        pass
-            self.output.insert(tk.END, f"You completed your cultivation\n")
+            except self.dct is 0:
+                self.output.insert(tk.END, f"You first need to decide how long you want to cultivate\n")
+
         self.output.yview(tk.END)
 
     def time(self, time=None):
@@ -951,6 +949,7 @@ class Game():
             while new_time > 0:
                 new_time -= 1
                 self.day += 1
+                game.cultivate(None, 2)
                 if self.day == 31:
                     self.month += 1
                     self.day = 1
@@ -958,7 +957,6 @@ class Game():
                         self.month = 1
                         self.year += 1
 
-                print(self.day)
                 self.date.config(text=f"{self.day}.{self.month}.{self.year} ")
                 self.output.yview(tk.END)
 
