@@ -242,8 +242,8 @@ class Game():
         self.drc = tk.Label(self.root,height=2,width=15,text=f"{self.rsn} level of \n{self.step} realm")
         self.drc.place(x=559,y=160)
 
-        self.kph = tk.Label(self.root,height=2,width=15,text=f"Cultivation Xp: {self.cue}",anchor="w")
-        self.kph.place(x=559,y=210)
+        self.kph = tk.Label(self.root,height=2,width=15,text=f"Cultivation Xp: \n{self.cue}")
+        self.kph.place(x=559,y=205)
 
         self.xpn = tk.Label(self.root, height=2, width=15, text=f"XP for next level:\n {self.acr}")
         self.xpn.place(x=559, y=250)
@@ -446,7 +446,7 @@ class Game():
                                 self.output.insert(tk.END,f"As you are currently in the peek of {self.step}\n"
                                       f" the elder was not able to help you break through but you got 1000 cultivation xp\n")
                                 self.cue += 1000
-                                self.kph.config(text=f"Cultivation Xp: {self.cue}")
+                                self.kph.config(text=f"Cultivation Xp: \n{self.cue}")
                             else:
                                 self.rea += 1
                                 self.rsn += 1
@@ -463,7 +463,7 @@ class Game():
                                 self.output.insert(tk.END,f"As you are currently in the {self.rsn} of {self.step}\n"
                                       f" the elder was not able to help you break through but you got 2500 cultivation xp")
                                 self.cue += 2500
-                                self.kph.config(text=f"Cultivation Xp: {self.cue}")
+                                self.kph.config(text=f"Cultivation Xp: \n{self.cue}")
                             else:
                                 self.rea += 2
                                 self.rsn += 2
@@ -489,7 +489,7 @@ class Game():
 
         self.cp = self.rea * 100
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
-        self.kph.config(text=f"Cultivation Xp: {self.cue}")
+        self.kph.config(text=f"Cultivation Xp: \n{self.cue}")
         self.output.yview(tk.END)
 
 
@@ -552,12 +552,13 @@ class Game():
 
     def realms(self):
         game.del_butn()
-        acr = self.cr*self.rea #required
-        self.acr = acr
-        if self.cue >= acr:
+        if self.cue >= self.acr:
+            self.cue -= self.acr
             self.rsn += 1
             self.rea += 1
-            self.cue -= acr
+            self.acr = self.acr * self.rea  # required
+            self.xpn.config(text=f"XP for next level:\n {self.acr}")
+            self.kph.config(text=f"Cultivation Xp: {self.cue}")
             if 1 <= self.rea <= 9:
                 self.step = "Qi Gathering"
             elif 10 <= self.rea <= 18:
@@ -574,16 +575,22 @@ class Game():
                 self.output.insert(tk.END,"You advance to the next realm\n")
                 self.rsn = 1
             self.output.insert(tk.END,f"Your cultivation increased and reached the {self.rsn} of {self.step}\n")
-        else: self.output.insert(tk.END,"You do not have enough Xp\n")
-        self.cp = self.rea * 100
+        else: self.output.insert(tk.END,f"You need {self.acr} Xp but you only have {self.cue}\n")
         self.xpn.config(text=f"XP for next level:\n {self.acr}")
-        self.kph.config(text=f"Cultivation Xp: {self.cue}")
+        self.cp = self.rea * 100
+        self.kph.config(text=f"Cultivation Xp: \n{self.cue}")
         self.drc.config(text=f"{self.rsn} level of \n{self.step} realm")
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.output.yview(tk.END)
 
-    def travel(self, t=None, wmove=None, start_call=None): #this code part was mostly written by ai
+    def travel(self, t=None, wmove=None, start_call=None): #this def part was mostly written by ai
         game.del_butn()
+
+        self.map.tag_configure("zero", foreground="green")
+        self.map.tag_configure("one", foreground="dark green")
+        self.map.tag_configure("two", foreground="gold")
+        self.map.tag_configure("three", foreground="white")
+
         """
         Show map and either:
           - display movement buttons (when wmove is None), or
@@ -617,7 +624,21 @@ class Game():
                 setattr(self, f"butt{i}", None)
 
         if start_call == 1:
-            self.map.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
+
+            for line in self.current_map.display_map():
+                for ch in line:
+                    if ch == "0":
+                        self.map.insert(tk.END, ch, "zero")
+                    elif ch == "1":
+                        self.map.insert(tk.END, ch, "one")
+                    elif ch == "2":
+                        self.map.insert(tk.END, ch, "two")
+                    elif ch == "3":
+                        self.map.insert(tk.END, ch, "three")
+                    else:
+                        self.map.insert(tk.END, ch)
+                self.map.insert(tk.END, "\n")
+
             self.starting_map_token = 0
         else:
 
@@ -699,8 +720,20 @@ class Game():
         # --- If a movement (wmove) was provided, perform it ---
         if wmove is not None:
             move_result = self.current_map.move_player(wmove)
+
             self.map.delete("1.0", tk.END)
-            self.map.insert(tk.END, "\n".join(self.current_map.display_map()) + "\n")
+            for line in self.current_map.display_map():
+                for ch in line:
+                    if ch == "0":
+                        self.map.insert(tk.END, ch, "zero")
+                    elif ch == "1":
+                        self.map.insert(tk.END, ch, "one")
+                    elif ch == "2":
+                        self.map.insert(tk.END, ch, "two")
+                    elif ch == "3":
+                        self.map.insert(tk.END, ch, "three")
+                    else:
+                        self.map.insert(tk.END, ch)
             game.time(5)
             if int(self.current_map.get_player_terrain()) == 0:
                 self.output.insert(tk.END,"You traveled for 5 days and arrived in Plains.\n")
@@ -934,14 +967,15 @@ class Game():
                 ctpd = self.dct
                 dc = self.bls * ctpd / 100
                 self.cue += dc
-                self.kph.config(text=f"Cultivation Xp: {self.cue}")
-            except self.dct is 0:
+                self.kph.config(text=f"Cultivation Xp: \n{self.cue}")
+            except self.dct == 0:
                 self.output.insert(tk.END, f"You first need to decide how long you want to cultivate\n")
 
         self.output.yview(tk.END)
 
     def time(self, time=None):
         print("time works")
+
         if time is None:
             print("Time do not do that")
         else:
