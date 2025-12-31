@@ -49,6 +49,8 @@ class Game():
         self.year = int(103)
         self.btc = int(5)  #base travel cost time
         self.dct = int(0)  #daily cultivation time
+        self.place = None  #player location
+        self.frt = int(24)  # daily free time
 
     def del_butn(self):
         try:
@@ -182,10 +184,11 @@ class Game():
         self.but3 = tk.Button(self.root, height=2, width=4, text="Fight", command=game.combat)
         self.but3.place(x=559, y=40)
 
-        self.but4 = tk.Button(self.root, height=2, width=4, text="Stats")
+        self.but4 = tk.Button(self.root, height=2, width=4, text="Time", command=lambda: game.time_manager())
         self.but4.place(x=629, y=40)
 
-        self.but5 = tk.Button(self.root, height=2, width=4, text="Cultivate", command=lambda: game.cultivate(0, 0,None))
+        self.but5 = tk.Button(self.root, height=2, width=4, text="Cultivate",
+                              command=lambda: game.cultivate(0, 0, None))
         self.but5.place(x=559, y=80)
 
         self.but6 = tk.Button(self.root, height=2, width=4, text="Ascension", command=game.realms)
@@ -263,10 +266,10 @@ class Game():
         self.date.place(x=559, y=290)
 
         #travel code
-        self.root.bind("<w>", lambda e: self.travel(1, "up"))
-        self.root.bind("<a>", lambda e: self.travel(1, "left"))
-        self.root.bind("<s>", lambda e: self.travel(1, "down"))
-        self.root.bind("<d>", lambda e: self.travel(1, "right"))
+        self.root.bind_all("<w>", lambda e: self.travel(1, "up"))
+        self.root.bind_all("<a>", lambda e: self.travel(1, "left"))
+        self.root.bind_all("<s>", lambda e: self.travel(1, "down"))
+        self.root.bind_all("<d>", lambda e: self.travel(1, "right"))
 
         if self.starting_map_token == 1:
             game.travel(start_call=self.starting_map_token)
@@ -601,6 +604,9 @@ class Game():
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.output.yview(tk.END)
 
+    def location(self, pl_loc=None):
+        self.output.insert(tk.END, f"As you are in a {self.place} you are able to do:\n")
+
     def travel(self, t=None, wmove=None, start_call=None):  #this def part was mostly written by ai
         game.del_butn()
 
@@ -660,81 +666,54 @@ class Game():
             self.starting_map_token = 0
         else:
 
-            # --- Show current map prompt ---
-            self.output.insert(tk.END, "\n")
-            self.output.insert(tk.END, "Where do you want to move?\n")
-            print(self.current_map.get_player_terrain())
-            # --- If no movement chosen yet, create the directional buttons and (if t==0) the visit options ---
-            if wmove is None:
+            # If original caller asked t==0, show visit menu instead of directional buttons.
+            if t == 0:
+                # destroy directional buttons (we just created them) to show visit options instead
+                for i in range(1, 5):
+                    if getattr(self, f"bt{i}", 0) == 1:
+                        btn = getattr(self, f"butt{i}", None)
+                        if btn is not None:
+                            try:
+                                btn.destroy()
+                            except Exception:
+                                pass
+                        setattr(self, f"bt{i}", 0)
+                        setattr(self, f"butt{i}", None)
 
-                # Create directional movement buttons.
-                # IMPORTANT: pass t=1 for the button callbacks so clicks DON'T trigger map reload
-                self.butt1 = tk.Button(self.root, height=2, width=6, text="Up",
-                                       command=lambda: self.travel(1, "up"))
+                self.output.insert(tk.END, "\nYou can visit:\n\n")
+                self.output.insert(tk.END, "1 - random Place\n")
+                self.output.insert(tk.END, "2 - the village\n")
+
+                # Option 1 and 2 buttons
+                self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=self.rdt1)
                 self.butt1.place(x=559, y=340)
                 self.bt1 = 1
 
-                self.butt2 = tk.Button(self.root, height=2, width=6, text="Down",
-                                       command=lambda: self.travel(1, "down"))
+                self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=self.rdt2)
                 self.butt2.place(x=629, y=340)
                 self.bt2 = 1
 
-                self.butt3 = tk.Button(self.root, height=2, width=6, text="Left",
-                                       command=lambda: self.travel(1, "left"))
-                self.butt3.place(x=559, y=380)
-                self.bt3 = 1
+                # Option 3 (requires rwsi > 25)
+                if getattr(self, "rwsi", 0) > 25:
+                    self.output.insert(tk.END, "3 - sect middle\n")
+                    self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=self.rdt3)
+                    self.butt3.place(x=559, y=380)
+                    self.bt3 = 1
 
-                self.butt4 = tk.Button(self.root, height=2, width=6, text="Right",
-                                       command=lambda: self.travel(1, "right"))
-                self.butt4.place(x=629, y=380)
-                self.bt4 = 1
+                # Option 4 (requires rwsi >= 100)
+                if getattr(self, "rwsi", 0) >= 100:
+                    self.output.insert(tk.END, "4 - a goldy artifact\n")
+                    self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=self.rdt4)
+                    self.butt4.place(x=629, y=380)
+                    self.bt4 = 1
 
-                # If original caller asked t==0, show visit menu instead of directional buttons.
-                if t == 0:
-                    # destroy directional buttons (we just created them) to show visit options instead
-                    for i in range(1, 5):
-                        if getattr(self, f"bt{i}", 0) == 1:
-                            btn = getattr(self, f"butt{i}", None)
-                            if btn is not None:
-                                try:
-                                    btn.destroy()
-                                except Exception:
-                                    pass
-                            setattr(self, f"bt{i}", 0)
-                            setattr(self, f"butt{i}", None)
-
-                    self.output.insert(tk.END, "\nYou can visit:\n\n")
-                    self.output.insert(tk.END, "1 - random Place\n")
-                    self.output.insert(tk.END, "2 - the village\n")
-
-                    # Option 1 and 2 buttons
-                    self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=self.rdt1)
-                    self.butt1.place(x=559, y=340)
-                    self.bt1 = 1
-
-                    self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=self.rdt2)
-                    self.butt2.place(x=629, y=340)
-                    self.bt2 = 1
-
-                    # Option 3 (requires rwsi > 25)
-                    if getattr(self, "rwsi", 0) > 25:
-                        self.output.insert(tk.END, "3 - sect middle\n")
-                        self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=self.rdt3)
-                        self.butt3.place(x=559, y=380)
-                        self.bt3 = 1
-
-                    # Option 4 (requires rwsi >= 100)
-                    if getattr(self, "rwsi", 0) >= 100:
-                        self.output.insert(tk.END, "4 - a goldy artifact\n")
-                        self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=self.rdt4)
-                        self.butt4.place(x=629, y=380)
-                        self.bt4 = 1
-
-                # <<-- PLACE THE RETURN HERE so we only exit when we created buttons (no wmove provided) -->
+            # <<-- PLACE THE RETURN HERE so we only exit when we created buttons (no wmove provided) -->
+            if wmove is None:
                 self.output.yview(tk.END)
-                return  # nothing to do until the player clicks a button
+                return
+        # nothing to do until the player clicks a button
 
-            # If we get here, wmove is not None so perform the move
+        # If we get here, wmove is not None so perform the move
 
         # --- If a movement (wmove) was provided, perform it ---
         if wmove is not None:
@@ -756,12 +735,16 @@ class Game():
             game.time(5)
             if int(self.current_map.get_player_terrain()) == 0:
                 self.output.insert(tk.END, "You traveled for 5 days and arrived in Plains.\n")
+                self.place = "Plains"
             elif int(self.current_map.get_player_terrain()) == 1:
                 self.output.insert(tk.END, "You traveled for 5 days and arrived in a Forrest.\n")
+                self.place = "Forest"
             elif int(self.current_map.get_player_terrain()) == 2:
                 self.output.insert(tk.END, "You traveled for 5 days and arrived in a City.\n")
+                self.place = "City"
             elif int(self.current_map.get_player_terrain()) == 3:
                 self.output.insert(tk.END, "You traveled for 5 days and should not be able to be here.\n")
+                self.place = "???"
             try:
                 self.current_map.save_map("Main_Map.txt")
             except Exception:
@@ -959,22 +942,23 @@ class Game():
             self.output.insert(tk.END, "(3) 10 Hours\n")
             self.output.insert(tk.END, "(4) 18 Hours\n")
 
-            self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.cultivate(1, 1,None))
+            self.butt1 = tk.Button(self.root, height=2, width=4, text="1", command=lambda: game.cultivate(1, 1, None))
             self.butt1.place(x=559, y=340)
 
-            self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.cultivate(5, 1,None))
+            self.butt2 = tk.Button(self.root, height=2, width=4, text="2", command=lambda: game.cultivate(5, 1, None))
             self.butt2.place(x=629, y=340)
 
-            self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.cultivate(10, 1,None ))
+            self.butt3 = tk.Button(self.root, height=2, width=4, text="3", command=lambda: game.cultivate(10, 1, None))
             self.butt3.place(x=559, y=380)
 
-            self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.cultivate(18, 1,None))
+            self.butt4 = tk.Button(self.root, height=2, width=4, text="4", command=lambda: game.cultivate(18, 1, None))
             self.butt4.place(x=629, y=380)
         elif c == 1:
             game.del_butn()
             game.del_butn()
             self.output.insert(tk.END, f"You decided to cultivate {t} hours a day\n")
             self.dct = t
+            self.frt = 24 - self.dct
 
         elif c == 2:
             try:
@@ -988,12 +972,12 @@ class Game():
 
         self.output.yview(tk.END)
 
-    def time(self, time=None):
+    def time(self, days=None):
 
-        new_time = time
-        game.cultivate(None, 2, time)
-        while new_time > 0:
-            new_time -= 1
+        new_days = days
+        game.cultivate(None, 2, days)
+        while new_days > 0:
+            new_days -= 1
             self.day += 1
             if self.day == 31:
                 self.month += 1
@@ -1004,6 +988,183 @@ class Game():
         else:
             self.date.config(text=f"{self.day}.{self.month}.{self.year} ")
             self.output.yview(tk.END)
+
+    def dtime(self):  # for the 24-hour cycles
+        pass
+
+    def time_manager(self):  # for time managment system #no idea how i will get this to work
+        pass
+        time_manager_overlay = tk.Toplevel(self.root)
+        time_manager_overlay.transient(self.root)  # associate with root
+        time_manager_overlay.grab_set()  # make it modal (blocks background)
+        time_manager_overlay.overrideredirect(True)  # remove window decorations
+
+        # match geometry to root (works if root isn't moved between calls)
+        x = self.root.winfo_rootx()
+        y = self.root.winfo_rooty() + 450
+        w = self.root.winfo_width()
+        h = self.root.winfo_height() - 450
+        time_manager_overlay.geometry(f"{w}x{h}+{x}+{y}")
+        self.root.bind("<Escape>", lambda e: close_time_manager())
+        exit_btn = tk.Button(time_manager_overlay, text="X", command=lambda: close_time_manager())
+        exit_btn.pack(side="top", anchor="ne")
+
+        Activities = [
+            {"name": "Cultivation", "color": "#bfbfbf"},
+            {"name": "Work", "color": "#6b8e23"},
+            {"name": "Needs", "color": "#9370db"},
+            {"name": "Sleep", "color": "#5b7bd5"},
+        ]
+
+        HOUR_DEFAULT = "#4a4a4a"  # default hour box color
+        self.hours = [-1] * 24  # -1 means unset
+        self.rect_ids = [None] * 24
+
+        self.group_buttons = []
+        for i, g in enumerate(Activities):
+
+            btn = tk.Button(
+                time_manager_overlay, text=g['name'], relief=tk.RAISED,
+                command=lambda i=i: self.select_group(i),
+                pady=6, width=8
+
+            )
+            btn.place(x=100 + i * 110, y=10, )
+            self.group_buttons.append(btn)
+
+            #i give up from here on onwards is danger expect for the close def thats great.
+
+            #canvas_frame = tk.Frame()
+            #canvas_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+            #self.canvas = tk.Canvas(canvas_frame, highlightthickness=0)
+            #self.canvas.pack(fill=tk.BOTH, expand=True)
+
+            # Bindings for mouse events
+            #self.canvas.bind("<Button-1>", self._on_left_click)
+            #self.canvas.bind("<B1-Motion>", self._on_left_drag)
+            #self.canvas.bind("<ButtonRelease-1>", self._on_left_release)
+
+            def close_time_manager():
+                time_manager_overlay.grab_release(),
+                time_manager_overlay.destroy()
+                self.root.focus_set()
+
+            def select_group(self, index):
+                self.select_group = index
+                # Visual feedback
+                for i, btn in enumerate(self.group_buttons):
+                    if i == index:
+                        btn.config(relief=tk.SUNKEN, bd=3)
+                    else:
+                        btn.config(relief=tk.RAISED, bd=1)
+
+            def _draw_hours(self):
+                self.canvas.delete("all")
+                w = self.canvas.winfo_width() or 800
+                h = self.canvas.winfo_height() or 160
+
+                left_col_w = 220
+                top_padding = 12
+                hour_strip_h = 80
+
+                # Left column (name + icon)
+                self.canvas.create_rectangle(0, 0, left_col_w, h, fill="#111", outline="")
+                # small icon box
+                icon_x = 18
+                icon_y = top_padding
+                self.canvas.create_rectangle(icon_x, icon_y, icon_x + 48, icon_y + 48, fill="#222", outline="#333")
+                # name text
+                self.canvas.create_text(icon_x + 64, icon_y + 8, anchor='nw', fill="#fff",
+                                        text="Dave, Taxonomist", font=("Segoe UI", 12, "bold"))
+
+                # Hour numbers header (0..23)
+                usable_w = max(600, w - left_col_w - 20)
+                hour_w = usable_w / 24.0
+                start_x = left_col_w + 10
+                y0 = top_padding + 20
+
+                for i in range(24):
+                    x1 = start_x + i * hour_w
+                    x2 = x1 + hour_w - 2
+                    # hour background rect
+                    rect = self.canvas.create_rectangle(x1, y0 + 24, x2, y0 + 24 + hour_strip_h,
+                                                        fill=HOUR_DEFAULT, outline="#222", width=1)
+                    self.rect_ids[i] = rect
+                    # store tag for lookup
+                    self.canvas.tag_bind(rect, '<Enter>', lambda e, idx=i: None)
+
+                    # draw hour number above
+                    self.canvas.create_text((x1 + x2) / 2, y0, text=str(i), fill="#ddd", font=("Helvetica", 9))
+
+                    # colored overlay if assigned
+                    if self.hours[i] != -1:
+                        col = GROUPS[self.hours[i]]['color']
+                        # put a smaller rect on top so outline remains
+                        self.canvas.create_rectangle(x1 + 1, y0 + 25, x2 - 1, y0 + 24 + hour_strip_h - 1, fill=col,
+                                                     outline="")
+
+                # thin dividing line
+                self.canvas.create_line(left_col_w, 0, left_col_w, h, fill="#2a2a2a")
+
+            def _redraw(self):
+                # redraw on resize
+                self._draw_hours()
+
+            def _hour_index_from_xy(self, x, y):
+                # compute which hour box the x,y falls into
+                left_col_w = 220
+                start_x = left_col_w + 10
+                w = self.canvas.winfo_width()
+                usable_w = max(600, w - left_col_w - 20)
+                hour_w = usable_w / 24.0
+                if x < start_x:
+                    return None
+                rel = (x - start_x) / hour_w
+                idx = int(rel)
+                if 0 <= idx < 24:
+                    return idx
+                return None
+
+            def _paint_hour(self, idx, group_idx):
+                if idx is None:
+                    return
+                # update model
+                self.hours[idx] = group_idx
+                # update canvas: redraw the small overlay rect on top of the hour rectangle
+                # To keep things simple, just call _draw_hours which re-renders everything
+                self._draw_hours()
+
+            def _clear_hour(self, idx):
+                if idx is None:
+                    return
+                self.hours[idx] = -1
+                self._draw_hours()
+
+            # Mouse handlers
+            def _on_left_click(self, event):
+                idx = self._hour_index_from_xy(event.x, event.y)
+                if idx is None:
+                    return
+                self._dragging = True
+                self._last_painted = idx
+                self._paint_hour(idx, self.selected_group)
+
+            def _on_left_drag(self, event):
+                if not self._dragging:
+                    return
+                idx = self._hour_index_from_xy(event.x, event.y)
+                if idx is None or idx == self._last_painted:
+                    return
+                self._last_painted = idx
+                self._paint_hour(idx, self.selected_group)
+
+            def _on_left_release(self, event):
+                self._dragging = False
+                self._last_painted = None
+
+        #self.frt
+
 
 game = Game()
 game.window()
