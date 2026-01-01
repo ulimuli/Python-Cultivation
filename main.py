@@ -51,6 +51,14 @@ class Game():
         self.dct = int(0)  #daily cultivation time
         self.place = None  #player location
         self.frt = int(24)  # daily free time
+        self.selected_group = 1 # standard activity (time manager)
+        self.Activities = [
+            {"name": "Cultivation", "color": "#bfbfbf"},
+            {"name": "Work", "color": "#6b8e23"},
+            {"name": "Needs", "color": "#9370db"},
+            {"name": "Sleep", "color": "#5b7bd5"},
+        ]
+
 
     def del_butn(self):
         try:
@@ -993,38 +1001,28 @@ class Game():
         pass
 
     def time_manager(self):  # for time managment system #no idea how i will get this to work
-        pass
-        time_manager_overlay = tk.Toplevel(self.root)
-        time_manager_overlay.transient(self.root)  # associate with root
-        time_manager_overlay.grab_set()  # make it modal (blocks background)
-        time_manager_overlay.overrideredirect(True)  # remove window decorations
+        self.time_manager_overlay = tk.Toplevel(self.root)
+        self.time_manager_overlay.transient(self.root)  # associate with root
+        self.time_manager_overlay.grab_set()  # make it modal (blocks background)
+        self.time_manager_overlay.overrideredirect(True)  # remove window decorations
 
         # match geometry to root (works if root isn't moved between calls)
         x = self.root.winfo_rootx()
         y = self.root.winfo_rooty() + 450
         w = self.root.winfo_width()
         h = self.root.winfo_height() - 450
-        time_manager_overlay.geometry(f"{w}x{h}+{x}+{y}")
-        self.root.bind("<Escape>", lambda e: close_time_manager())
-        exit_btn = tk.Button(time_manager_overlay, text="X", command=lambda: close_time_manager())
+        self.time_manager_overlay.geometry(f"{w}x{h}+{x}+{y}")
+        self.root.bind("<Escape>", lambda e: game.close_time_manager())
+        exit_btn = tk.Button(self.time_manager_overlay, text="X", command=lambda: game.close_time_manager())
         exit_btn.pack(side="top", anchor="ne")
 
-        Activities = [
-            {"name": "Cultivation", "color": "#bfbfbf"},
-            {"name": "Work", "color": "#6b8e23"},
-            {"name": "Needs", "color": "#9370db"},
-            {"name": "Sleep", "color": "#5b7bd5"},
-        ]
-
-        HOUR_DEFAULT = "#4a4a4a"  # default hour box color
         self.hours = [-1] * 24  # -1 means unset
         self.rect_ids = [None] * 24
 
         self.group_buttons = []
-        for i, g in enumerate(Activities):
-
+        for i, g in enumerate(self.Activities):
             btn = tk.Button(
-                time_manager_overlay, text=g['name'], relief=tk.RAISED,
+                self.time_manager_overlay, text=g['name'], relief=tk.RAISED,
                 command=lambda i=i: self.select_group(i),
                 pady=6, width=8
 
@@ -1034,10 +1032,7 @@ class Game():
 
             #i give up from here on onwards is danger expect for the close def thats great.
 
-            #canvas_frame = tk.Frame()
-            #canvas_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-            #self.canvas = tk.Canvas(canvas_frame, highlightthickness=0)
+            #self.canvas = tk.Canvas(self.time_manager_overlay, highlightthickness=0)
             #self.canvas.pack(fill=tk.BOTH, expand=True)
 
             # Bindings for mouse events
@@ -1045,12 +1040,14 @@ class Game():
             #self.canvas.bind("<B1-Motion>", self._on_left_drag)
             #self.canvas.bind("<ButtonRelease-1>", self._on_left_release)
 
-            def close_time_manager():
-                time_manager_overlay.grab_release(),
-                time_manager_overlay.destroy()
+            #self.select_group(self.selected_group)
+
+    def close_time_manager(self):
+                self.time_manager_overlay.grab_release(),
+                self.time_manager_overlay.destroy()
                 self.root.focus_set()
 
-            def select_group(self, index):
+    def select_group(self, index):
                 self.select_group = index
                 # Visual feedback
                 for i, btn in enumerate(self.group_buttons):
@@ -1059,7 +1056,8 @@ class Game():
                     else:
                         btn.config(relief=tk.RAISED, bd=1)
 
-            def _draw_hours(self):
+    def _draw_hours(self):
+                HOUR_DEFAULT = "#4a4a4a"  # default hour box color
                 self.canvas.delete("all")
                 w = self.canvas.winfo_width() or 800
                 h = self.canvas.winfo_height() or 160
@@ -1099,7 +1097,7 @@ class Game():
 
                     # colored overlay if assigned
                     if self.hours[i] != -1:
-                        col = GROUPS[self.hours[i]]['color']
+                        col = self.Activities[self.hours[i]]['color']
                         # put a smaller rect on top so outline remains
                         self.canvas.create_rectangle(x1 + 1, y0 + 25, x2 - 1, y0 + 24 + hour_strip_h - 1, fill=col,
                                                      outline="")
@@ -1107,11 +1105,11 @@ class Game():
                 # thin dividing line
                 self.canvas.create_line(left_col_w, 0, left_col_w, h, fill="#2a2a2a")
 
-            def _redraw(self):
+    def _redraw(self):
                 # redraw on resize
                 self._draw_hours()
 
-            def _hour_index_from_xy(self, x, y):
+    def _hour_index_from_xy(self, x, y):
                 # compute which hour box the x,y falls into
                 left_col_w = 220
                 start_x = left_col_w + 10
@@ -1126,7 +1124,7 @@ class Game():
                     return idx
                 return None
 
-            def _paint_hour(self, idx, group_idx):
+    def _paint_hour(self, idx, group_idx):
                 if idx is None:
                     return
                 # update model
@@ -1135,14 +1133,14 @@ class Game():
                 # To keep things simple, just call _draw_hours which re-renders everything
                 self._draw_hours()
 
-            def _clear_hour(self, idx):
+    def _clear_hour(self, idx):
                 if idx is None:
                     return
                 self.hours[idx] = -1
                 self._draw_hours()
 
             # Mouse handlers
-            def _on_left_click(self, event):
+    def _on_left_click(self, event):
                 idx = self._hour_index_from_xy(event.x, event.y)
                 if idx is None:
                     return
@@ -1150,7 +1148,7 @@ class Game():
                 self._last_painted = idx
                 self._paint_hour(idx, self.selected_group)
 
-            def _on_left_drag(self, event):
+    def _on_left_drag(self, event):
                 if not self._dragging:
                     return
                 idx = self._hour_index_from_xy(event.x, event.y)
@@ -1159,7 +1157,7 @@ class Game():
                 self._last_painted = idx
                 self._paint_hour(idx, self.selected_group)
 
-            def _on_left_release(self, event):
+    def _on_left_release(self, event):
                 self._dragging = False
                 self._last_painted = None
 
