@@ -47,17 +47,23 @@ class Game():
         self.day = int(1)
         self.month = int(1)
         self.year = int(103)
-        self.btc = int(5)  #base travel cost time
+        self.btc = int(0)  #base travel cost time
         self.dct = int(0)  #daily cultivation time
         self.place = None  #player location
-        self.frt = int(24)  # daily free time
+        self.dft = int(2)  # daily free time need
+        self.dsn = int(6)   # daily sleep need
+        self.dwt = int(0)   # daily work time
         self.selected_group = 1 # standard activity (time manager)
         self.Activities = [
             {"name": "Cultivation", "color": "#bfbfbf"},
             {"name": "Work", "color": "#6b8e23"},
-            {"name": "Needs", "color": "#9370db"},
+            {"name": "Free Time", "color": "#9370db"},
             {"name": "Sleep", "color": "#5b7bd5"},
         ]
+        self.hours = [-1] * 24  #used for the Time Manager hopefully :(
+        self.rect_ids = [None] * 24
+        self._dragging = False
+        self._last_painted = None #please work (up until now Time Stuff)
 
 
     def del_butn(self):
@@ -196,7 +202,8 @@ class Game():
         self.but4.place(x=629, y=40)
 
         self.but5 = tk.Button(self.root, height=2, width=4, text="Cultivate",
-                              command=lambda: game.cultivate(0, 0, None))
+                              command=lambda: self.output.insert(tk.END, "To change your daily cultivation Time please open the Time Manager\n"),
+                              )
         self.but5.place(x=559, y=80)
 
         self.but6 = tk.Button(self.root, height=2, width=4, text="Ascension", command=game.realms)
@@ -724,7 +731,7 @@ class Game():
         # If we get here, wmove is not None so perform the move
 
         # --- If a movement (wmove) was provided, perform it ---
-        if wmove is not None:
+        if wmove is not None and self.btc > 0:
             move_result = self.current_map.move_player(wmove)
 
             self.map.delete("1.0", tk.END)
@@ -740,23 +747,24 @@ class Game():
                         self.map.insert(tk.END, ch, "three")
                     else:
                         self.map.insert(tk.END, ch)
-            game.time(5)
+            game.time(self.btc)
             if int(self.current_map.get_player_terrain()) == 0:
-                self.output.insert(tk.END, "You traveled for 5 days and arrived in Plains.\n")
+                self.output.insert(tk.END, f"You traveled for {self.btc} days and arrived in Plains.\n")
                 self.place = "Plains"
             elif int(self.current_map.get_player_terrain()) == 1:
-                self.output.insert(tk.END, "You traveled for 5 days and arrived in a Forrest.\n")
+                self.output.insert(tk.END, f"You traveled for {self.btc} and arrived in a Forrest.\n")
                 self.place = "Forest"
             elif int(self.current_map.get_player_terrain()) == 2:
-                self.output.insert(tk.END, "You traveled for 5 days and arrived in a City.\n")
+                self.output.insert(tk.END, f"You traveled for {self.btc} and arrived in a City.\n")
                 self.place = "City"
             elif int(self.current_map.get_player_terrain()) == 3:
-                self.output.insert(tk.END, "You traveled for 5 days and should not be able to be here.\n")
+                self.output.insert(tk.END, f"You traveled for 5 days and should not be able to be here.\n")
                 self.place = "???"
             try:
                 self.current_map.save_map("Main_Map.txt")
             except Exception:
                 self.output.insert(tk.END, "Warning: failed to save map.\n")
+        else: self.output.insert(tk.END, "To travel you will need to work for at least 1 hour a day\n")
 
         self.output.yview(tk.END)
 
@@ -963,7 +971,6 @@ class Game():
             self.butt4.place(x=629, y=380)
         elif c == 1:
             game.del_butn()
-            game.del_butn()
             self.output.insert(tk.END, f"You decided to cultivate {t} hours a day\n")
             self.dct = t
             self.frt = 24 - self.dct
@@ -1013,10 +1020,9 @@ class Game():
         h = self.root.winfo_height() - 450
         self.time_manager_overlay.geometry(f"{w}x{h}+{x}+{y}")
         self.root.bind("<Escape>", lambda e: game.close_time_manager())
-        exit_btn = tk.Button(self.time_manager_overlay, text="X", command=lambda: game.close_time_manager())
-        exit_btn.pack(side="top", anchor="ne")
+        exit_btn = tk.Button(self.time_manager_overlay, text="X", command=lambda: self.close_time_manager())
+        exit_btn.pack(side=tk.TOP, anchor="ne")
 
-        self.hours = [-1] * 24  # -1 means unset
         self.rect_ids = [None] * 24
 
         self.group_buttons = []
@@ -1032,23 +1038,33 @@ class Game():
 
             #i give up from here on onwards is danger expect for the close def thats great.
 
-            #self.canvas = tk.Canvas(self.time_manager_overlay, highlightthickness=0)
-            #self.canvas.pack(fill=tk.BOTH, expand=True)
+        canvas_frame = tk.Frame(self.time_manager_overlay,height=200)
+        canvas_frame.pack(side=tk.TOP,fill=tk.X, pady=25)
+        canvas_frame.pack_propagate(False)
+
+        self.canvas = tk.Canvas(canvas_frame, highlightthickness=0)
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+        self._draw_hours()
 
             # Bindings for mouse events
-            #self.canvas.bind("<Button-1>", self._on_left_click)
-            #self.canvas.bind("<B1-Motion>", self._on_left_drag)
-            #self.canvas.bind("<ButtonRelease-1>", self._on_left_release)
+        self.canvas.bind("<Button-1>", self._on_left_click)
+        self.canvas.bind("<B1-Motion>", self._on_left_drag)
+        self.canvas.bind("<ButtonRelease-1>", self._on_left_release)
 
-            #self.select_group(self.selected_group)
+        self.select_group(self.selected_group)
 
     def close_time_manager(self):
-                self.time_manager_overlay.grab_release(),
-                self.time_manager_overlay.destroy()
-                self.root.focus_set()
+        if self.dft or self.dsn > 0:
+            self.output.insert(tk.END, f"You need 2 hours of free time a day as well as 6 hours of sleep a day\n")
+        else:
+            self.time_manager_overlay.grab_release()
+            self.time_manager_overlay.destroy()
+            self.root.focus_set()
+        self.output.yview(tk.END)
+
 
     def select_group(self, index):
-                self.select_group = index
+                self.selected_group = index
                 # Visual feedback
                 for i, btn in enumerate(self.group_buttons):
                     if i == index:
@@ -1059,30 +1075,32 @@ class Game():
     def _draw_hours(self):
                 HOUR_DEFAULT = "#4a4a4a"  # default hour box color
                 self.canvas.delete("all")
-                w = self.canvas.winfo_width() or 800
-                h = self.canvas.winfo_height() or 160
-
-                left_col_w = 220
-                top_padding = 12
-                hour_strip_h = 80
-
-                # Left column (name + icon)
-                self.canvas.create_rectangle(0, 0, left_col_w, h, fill="#111", outline="")
-                # small icon box
-                icon_x = 18
-                icon_y = top_padding
-                self.canvas.create_rectangle(icon_x, icon_y, icon_x + 48, icon_y + 48, fill="#222", outline="#333")
-                # name text
-                self.canvas.create_text(icon_x + 64, icon_y + 8, anchor='nw', fill="#fff",
-                                        text="Dave, Taxonomist", font=("Segoe UI", 12, "bold"))
+                w = 700
+                h = 72
+                print(self.hours)
+                left_col_w = 0
+                top_padding = 1
+                hour_strip_h = 100
 
                 # Hour numbers header (0..23)
-                usable_w = max(600, w - left_col_w - 20)
+                usable_w = max(600, w - left_col_w - 25)
                 hour_w = usable_w / 24.0
                 start_x = left_col_w + 10
-                y0 = top_padding + 20
+                y0 = top_padding + 6
 
+                for ts in self.hours:
+                    if ts == -1:
+                        print("Shity")
+                    elif ts == 1:
+                        print("YOOOOOOO")
+                else: print("Alr")
+                self.dct = 0
+                self.dwt = 0
+                self.dft = 2
+                self.dsn = 6
+                print(self.dct)
                 for i in range(24):
+
                     x1 = start_x + i * hour_w
                     x2 = x1 + hour_w - 2
                     # hour background rect
@@ -1093,7 +1111,7 @@ class Game():
                     self.canvas.tag_bind(rect, '<Enter>', lambda e, idx=i: None)
 
                     # draw hour number above
-                    self.canvas.create_text((x1 + x2) / 2, y0, text=str(i), fill="#ddd", font=("Helvetica", 9))
+                    self.canvas.create_text((x1 + x2) / 2, y0, text=str(i), fill="#ddd")
 
                     # colored overlay if assigned
                     if self.hours[i] != -1:
@@ -1102,8 +1120,23 @@ class Game():
                         self.canvas.create_rectangle(x1 + 1, y0 + 25, x2 - 1, y0 + 24 + hour_strip_h - 1, fill=col,
                                                      outline="")
 
-                # thin dividing line
-                self.canvas.create_line(left_col_w, 0, left_col_w, h, fill="#2a2a2a")
+                #self.btc = 5 * 24 / self.dwt  # base travel cost time
+                #self.dct = int(0)  # daily cultivation time
+                #self.place = None  # player location
+                #self.dft = int(2)  # daily free time need
+                #self.dsn = int(6)  # daily sleep need
+                #self.dwt = int(0)  # daily work time
+
+                for hpd in self.hours:
+                    if hpd == 0:
+                        self.dct += 1
+                    elif hpd == 1:
+                        self.dwt += 1
+                        self.btc = 5 * 24 / self.dwt
+                    elif hpd == 2:
+                        self.dft -= 1
+                    elif hpd == 3:
+                        self.dsn -= 1
 
     def _redraw(self):
                 # redraw on resize
@@ -1111,10 +1144,10 @@ class Game():
 
     def _hour_index_from_xy(self, x, y):
                 # compute which hour box the x,y falls into
-                left_col_w = 220
+                left_col_w = 0
                 start_x = left_col_w + 10
                 w = self.canvas.winfo_width()
-                usable_w = max(600, w - left_col_w - 20)
+                usable_w = max(600, w - left_col_w - 25)
                 hour_w = usable_w / 24.0
                 if x < start_x:
                     return None
@@ -1142,6 +1175,7 @@ class Game():
             # Mouse handlers
     def _on_left_click(self, event):
                 idx = self._hour_index_from_xy(event.x, event.y)
+                print(idx)
                 if idx is None:
                     return
                 self._dragging = True
