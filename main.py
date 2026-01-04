@@ -3,6 +3,7 @@ import sys
 import time
 import tkinter as tk
 from Map import Map
+from Inventory_System import Inv_system
 
 
 class Game():
@@ -201,8 +202,8 @@ class Game():
         self.but4 = tk.Button(self.root, height=2, width=4, text="Time", command=lambda: game.time_manager())
         self.but4.place(x=629, y=40)
 
-        self.but5 = tk.Button(self.root, height=2, width=4, text="Cultivate",
-                              command=lambda: self.output.insert(tk.END, "To change your daily cultivation Time please open the Time Manager\n"),
+        self.but5 = tk.Button(self.root, height=2, width=4, text="Inventory",
+                              command=lambda: Inv_system(self.root)
                               )
         self.but5.place(x=559, y=80)
 
@@ -271,7 +272,7 @@ class Game():
         self.drc = tk.Label(self.root, height=2, width=15, text=f"{self.rsn} level of \n{self.step} realm")
         self.drc.place(x=559, y=160)
 
-        self.kph = tk.Label(self.root, height=2, width=15, text=f"Cultivation Xp: \n{self.cue}")
+        self.kph = tk.Label(self.root, height=2, width=15, text=f"Cultivation Xp: \n{self.cue:.0f}")
         self.kph.place(x=559, y=205)
 
         self.xpn = tk.Label(self.root, height=2, width=15, text=f"XP for next level:\n {self.acr}")
@@ -524,7 +525,7 @@ class Game():
 
         self.cp = self.rea * 100
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
-        self.kph.config(text=f"Cultivation Xp: \n{self.cue}")
+        self.kph.config(text=f"Cultivation Xp: \n{self.cue:.0f}")
         self.output.yview(tk.END)
 
     def sri(self, cr):
@@ -593,7 +594,7 @@ class Game():
             self.rea += 1
             self.acr = self.acr * self.rea  # required
             self.xpn.config(text=f"XP for next level:\n {self.acr}")
-            self.kph.config(text=f"Cultivation Xp: {self.cue}")
+            self.kph.config(text=f"Cultivation Xp: \n{self.cue:.0f}")
             if 1 <= self.rea <= 9:
                 self.step = "Qi Gathering"
             elif 10 <= self.rea <= 18:
@@ -614,7 +615,7 @@ class Game():
             self.output.insert(tk.END, f"You need {self.acr} Xp but you only have {self.cue}\n")
         self.xpn.config(text=f"XP for next level:\n {self.acr}")
         self.cp = self.rea * 100
-        self.kph.config(text=f"Cultivation Xp: \n{self.cue}")
+        self.kph.config(text=f"Cultivation Xp: \n{self.cue:.0f}")
         self.drc.config(text=f"{self.rsn} level of \n{self.step} realm")
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.output.yview(tk.END)
@@ -749,13 +750,13 @@ class Game():
                         self.map.insert(tk.END, ch)
             game.time(self.btc)
             if int(self.current_map.get_player_terrain()) == 0:
-                self.output.insert(tk.END, f"You traveled for {self.btc} days and arrived in Plains.\n")
+                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} days and arrived in Plains.\n")
                 self.place = "Plains"
             elif int(self.current_map.get_player_terrain()) == 1:
-                self.output.insert(tk.END, f"You traveled for {self.btc} and arrived in a Forrest.\n")
+                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a Forrest.\n")
                 self.place = "Forest"
             elif int(self.current_map.get_player_terrain()) == 2:
-                self.output.insert(tk.END, f"You traveled for {self.btc} and arrived in a City.\n")
+                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a City.\n")
                 self.place = "City"
             elif int(self.current_map.get_player_terrain()) == 3:
                 self.output.insert(tk.END, f"You traveled for 5 days and should not be able to be here.\n")
@@ -981,7 +982,7 @@ class Game():
                 ctpd = self.dct
                 dc = self.bls * ctpd * days / 100
                 self.cue += dc
-                self.kph.config(text=f"Cultivation Xp: \n{self.cue}")
+                self.kph.config(text=f"Cultivation Xp: \n{self.cue:.0f}")
             except self.dct == 0:
                 self.output.insert(tk.END, f"You first need to decide how long you want to cultivate\n")
 
@@ -1054,7 +1055,8 @@ class Game():
         self.select_group(self.selected_group)
 
     def close_time_manager(self):
-        if self.dft or self.dsn > 0:
+        print(self.dft,self.dsn)
+        if self.dft > 0 or self.dsn > 0:
             self.output.insert(tk.END, f"You need 2 hours of free time a day as well as 6 hours of sleep a day\n")
         else:
             self.time_manager_overlay.grab_release()
@@ -1077,7 +1079,6 @@ class Game():
                 self.canvas.delete("all")
                 w = 700
                 h = 72
-                print(self.hours)
                 left_col_w = 0
                 top_padding = 1
                 hour_strip_h = 100
@@ -1088,17 +1089,10 @@ class Game():
                 start_x = left_col_w + 10
                 y0 = top_padding + 6
 
-                for ts in self.hours:
-                    if ts == -1:
-                        print("Shity")
-                    elif ts == 1:
-                        print("YOOOOOOO")
-                else: print("Alr")
                 self.dct = 0
                 self.dwt = 0
                 self.dft = 2
                 self.dsn = 6
-                print(self.dct)
                 for i in range(24):
 
                     x1 = start_x + i * hour_w
@@ -1175,7 +1169,6 @@ class Game():
             # Mouse handlers
     def _on_left_click(self, event):
                 idx = self._hour_index_from_xy(event.x, event.y)
-                print(idx)
                 if idx is None:
                     return
                 self._dragging = True
