@@ -34,7 +34,7 @@ class Map:
     def get_player_terrain(self):
         """Return the terrain char (e.g. '0'..'4') under the player or None."""
         if self.player_pos is None:
-            return None
+            return 0
         r, c = self.player_pos
         return self.terrain[r][c]
 

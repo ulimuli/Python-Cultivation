@@ -1,9 +1,12 @@
 import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
+
+#maybe use a notebook tkk widget for better looks?
 
 
 class Inv_system:
-    def __init__(self, parent):
+    def __init__(self, parent, Items, coins):
         self.Inv_Groups = [
             {"name": "Everything"},
             {"name": "Equipment"},
@@ -14,11 +17,8 @@ class Inv_system:
             {"name": "Artifacts"},
             {"name": "others"}
         ]
-        self.Items = [
-            {"item": "simple Garment", "amount": 1, "category": "Equipment", "value": 10, "weight": 1},
-            {"item": "Bread", "amount": 5, "category": "Food", "value": 1, "weight": 1}
-        ]
-        self.coins = 10
+        self.Items = Items
+        self.coins = coins
         self.parent = parent
         self.canvas = tk.Canvas(parent)
         self.canvas.pack(fill=tk.BOTH, expand=True)
@@ -63,6 +63,7 @@ class Inv_system:
         list_start_x = 180
         list_start_y = 150
         list_gab_y = 35
+        self.selected_category = category
         self.inv_canvas.delete("all")
         self.inv_canvas.create_text(
 
@@ -100,29 +101,40 @@ class Inv_system:
         )
         for i in self.Items:
             if category == "Everything" or i["category"] == category:
-                self.inv_canvas.create_text(
+                if i["amount"] == 0:
+                    pass
+                else:
+                    self.inv_canvas.create_text(
 
-                    80,
-                    list_start_y,
-                    text=i["amount"],
-                )
+                        80,
+                        list_start_y,
+                        text=i["amount"],
+                    )
 
-                self.inv_canvas.create_text(
-                    list_start_x,
-                    list_start_y,
-                    text=i["item"]
+                    self.inv_canvas.create_text(
+                        list_start_x,
+                        list_start_y,
+                        text=i["item"]
 
-                )
-                self.inv_canvas.create_text(
-                    list_start_x + 200,
-                    list_start_y,
-                    text=i["value"]
+                    )
+                    self.inv_canvas.create_text(
+                        list_start_x + 200,
+                        list_start_y,
+                        text=i["value"]
 
-                )
-                self.inv_canvas.create_line(
-                    0, list_start_y + 15, 700, list_start_y + 15, fill="white"
-                )
-                list_start_y += list_gab_y
+                    )
+                    self.inv_canvas.create_line(
+                        0, list_start_y + 15, 700, list_start_y + 15, fill="white"
+                    )
+                    list_start_y += list_gab_y
+
+    def count_item(self,name,amount=-1):
+        for item in self.Items:
+            if item["item"] == name:
+                print(item["amount"])
+                item["amount"] += amount
+                print(item["amount"])
+                self.inv_cat(self.selected_category)
 
     def close_inv(self):
         self.canvas.grab_release()

@@ -2,10 +2,12 @@ import random
 import sys
 import time
 import tkinter as tk
+from tkinter import ttk
 from Map import Map
 from Inventory_System import Inv_system
-
-
+from location import Loc_sys
+from Time import Timming
+#Inv_system.count_item(Inv_system(self.root,self.Items,self.coins), name="Bread", amount=-10)
 class Game():
     def __init__(self):
         self.location = None
@@ -45,6 +47,9 @@ class Game():
         self.sr = 0  #sect rank
         self.rp = int(0)  #reputation in sects
         self.starting_map_token = 1
+        self.second = int(1)
+        self.minute = int(1)
+        self.hour = int(0)
         self.day = int(1)
         self.month = int(1)
         self.year = int(103)
@@ -54,17 +59,51 @@ class Game():
         self.dft = int(2)  # daily free time need
         self.dsn = int(6)   # daily sleep need
         self.dwt = int(0)   # daily work time
+        self.dea = int(0)   # daily eat amount
         self.selected_group = 1 # standard activity (time manager)
         self.Activities = [
             {"name": "Cultivation", "color": "#bfbfbf"},
             {"name": "Work", "color": "#6b8e23"},
             {"name": "Free Time", "color": "#9370db"},
             {"name": "Sleep", "color": "#5b7bd5"},
+            {"name": "Eat","color": "#FFD700"}
         ]
         self.hours = [-1] * 24  #used for the Time Manager hopefully :(
         self.rect_ids = [None] * 24
         self._dragging = False
         self._last_painted = None #please work (up until now Time Stuff)
+        self.Items = [
+            {"item": "simple Garment", "amount": 0, "category": "Equipment", "value": 10, "weight": 1},
+            {"item": "leather Boots", "amount": 0, "category": "Equipment", "value": 25, "weight": 2},
+
+            {"item": "Bread", "amount": 0, "category": "Food", "value": 1, "weight": 1},
+            {"item": "cooked meat", "amount": 0, "category": "Food", "value": 4, "weight": 1},
+            {"item": "ration pack", "amount": 0, "category": "Food", "value": 5, "weight": 1.5},
+
+            {"item": "health potion", "amount": 0, "category": "Consumables", "value": 20, "weight": 0.5},
+            {"item": "stamina potion", "amount": 0, "category": "Consumables", "value": 15, "weight": 0.4},
+            {"item": "bandage", "amount": 0, "category": "Consumables", "value": 2, "weight": 0.2},
+            {"item": "torch", "amount": 0, "category": "Consumables", "value": 2, "weight": 1},
+
+            {"item": "luck charm", "amount": 0, "category": "Talisman", "value": 45, "weight": 0.1},
+
+            {"item": "iron ore", "amount": 0, "category": "Refinement Resources", "value": 2, "weight": 3},
+            {"item": "copper ore", "amount": 0, "category": "Refinement Resources", "value": 1, "weight": 2.5},
+            {"item": "steel ingot", "amount": 0, "category": "Refinement Resources", "value": 40, "weight": 5},
+
+        ]
+
+        self.user_items = [
+            {"item": "simple Garment", "amount": 1, "category": "Equipment", "value": 10, "weight": 1},
+            {"item": "leather Boots", "amount": 1, "category": "Equipment", "value": 25, "weight": 2},
+            {"item": "Bread", "amount": 5, "category": "Food", "value": 1, "weight": 1},
+            {"item": "bandage", "amount": 2, "category": "Consumables", "value": 2, "weight": 0.2}
+
+        ]
+
+        self.coins = int(10)
+        self.loc_nr = 0
+
 
 
     def del_butn(self):
@@ -179,18 +218,19 @@ class Game():
         self.root = tk.Tk()
         self.root.geometry("700x600")
         self.root.title("Python-Cultivation")
+        self.root.resizable(False, False)
         self.cp = self.rea * 100
 
-        self.output = tk.Text(self.root, height=14, width=79)
+        self.output = tk.Text(self.root, height=14, width=79, highlightthickness=0)
         self.output.place(x=0, y=0)
 
-        self.map = tk.Text(self.root, height=18, width=79)
+        self.map = tk.Text(self.root, height=18, width=79, highlightthickness=0)
         self.map.place(x=0, y=200)
 
         self.inp = tk.Entry(self.root, width=61)
         self.inp.place(x=0, y=460)
 
-        self.but1 = tk.Button(self.root, height=2, width=4, text="Travel", command=lambda: game.travel(1, None))
+        self.but1 = tk.Button(self.root, height=2, width=4, text="Location", command=lambda: game.loc())
         self.but1.place(x=559, y=0)
 
         self.but2 = tk.Button(self.root, height=2, width=4, text="Sect", command=lambda: game.sects(0))
@@ -203,7 +243,7 @@ class Game():
         self.but4.place(x=629, y=40)
 
         self.but5 = tk.Button(self.root, height=2, width=4, text="Inventory",
-                              command=lambda: Inv_system(self.root)
+                              command=lambda: Inv_system(self.root,self.user_items,self.coins)
                               )
         self.but5.place(x=559, y=80)
 
@@ -219,28 +259,28 @@ class Game():
         self.but9 = tk.Button(self.root, height=2, width=8, text="Enter", command=game.uin)
         self.but9.place(x=559, y=450)
 
-        self.buttime1 = tk.Button(self.root, height=2, width=5, text="1 Second", command="")
+        self.buttime1 = tk.Button(self.root, height=2, width=5, text="1 Second", command=lambda: game.dtime(1))
         self.buttime1.place(x=30, y=490)
 
-        self.buttime2 = tk.Button(self.root, height=2, width=5, text="5 Seconds", command="")
+        self.buttime2 = tk.Button(self.root, height=2, width=5, text="5 Seconds", command=lambda: game.dtime(5))
         self.buttime2.place(x=110, y=490)
 
-        self.buttime3 = tk.Button(self.root, height=2, width=5, text="30 Seconds", command="")
+        self.buttime3 = tk.Button(self.root, height=2, width=5, text="30 Seconds", command=lambda: game.dtime(30))
         self.buttime3.place(x=190, y=490)
 
-        self.buttime4 = tk.Button(self.root, height=2, width=5, text="1 Minute", command="")
+        self.buttime4 = tk.Button(self.root, height=2, width=5, text="1 Minute", command=lambda: game.dtime(60))
         self.buttime4.place(x=270, y=490)
 
-        self.buttime5 = tk.Button(self.root, height=2, width=5, text="5 Minutes", command="")
+        self.buttime5 = tk.Button(self.root, height=2, width=5, text="5 Minutes", command=lambda: game.dtime(60*5))
         self.buttime5.place(x=350, y=490)
 
-        self.buttime6 = tk.Button(self.root, height=2, width=5, text="30 Minutes", command="")
+        self.buttime6 = tk.Button(self.root, height=2, width=5, text="30 Minutes", command=lambda: game.dtime(60*30))
         self.buttime6.place(x=430, y=490)
 
-        self.buttime7 = tk.Button(self.root, height=2, width=5, text="1 Hour", command="")
+        self.buttime7 = tk.Button(self.root, height=2, width=5, text="1 Hour", command=lambda: game.dtime(60*60))
         self.buttime7.place(x=510, y=490)
 
-        self.buttime8 = tk.Button(self.root, height=2, width=5, text="5 Hours", command="")
+        self.buttime8 = tk.Button(self.root, height=2, width=5, text="5 Hours", command=lambda: game.dtime(60*60*5))
         self.buttime8.place(x=590, y=490)
 
         self.buttime9 = tk.Button(self.root, height=2, width=5, text="1 day", command=lambda: game.time(1))
@@ -281,6 +321,9 @@ class Game():
         self.date = tk.Label(self.root, height=2, width=15, text=f"{self.day}.{self.month}.{self.year} ")
         self.date.place(x=559, y=290)
 
+        #location code
+
+
         #travel code
         self.root.bind_all("<w>", lambda e: self.travel(1, "up"))
         self.root.bind_all("<a>", lambda e: self.travel(1, "left"))
@@ -297,6 +340,10 @@ class Game():
                                    " The air is filled with Qi, an unseen force that allows you to cultivate.\n")
         self.output.insert(tk.END, "\n")
         self.output.insert(tk.END, "What is your name in this vast world\n")
+
+        self.loc_sys = Loc_sys(self.root, self.place, self.loc_nr, self.dct, self.bls, self.cue,
+                               self.second,
+                               self.minute, self.hour, self.day, self.month, self.year,self.Items,self.user_items,self.coins,self.dwt)
 
         self.root.mainloop()
 
@@ -620,8 +667,20 @@ class Game():
         self.cpl.config(text=f"Combat Power:\n {self.cp}")
         self.output.yview(tk.END)
 
-    def location(self, pl_loc=None):
-        self.output.insert(tk.END, f"As you are in a {self.place} you are able to do:\n")
+    def loc(self):
+        if self.cur_loc is None:
+            self.travel()
+            self.loc_sys.col_list_update(self.cur_loc)
+        self.loc_sys.create_ui()
+        self.loc_sys.time_update()
+        self.loc_sys.workplace(dwt=self.dwt)
+
+
+
+
+
+
+        #self.output.insert(tk.END, f"As you are in a {self.place} you are able to do:\n")
 
     def travel(self, t=None, wmove=None, start_call=None):  #this def part was mostly written by ai
         game.del_butn()
@@ -649,7 +708,8 @@ class Game():
         if not hasattr(self, "current_map") or getattr(self, "current_map") is None:
             self.current_map = Map()
             self.current_map.load_map()
-            print(self.current_map.get_player_terrain())
+            self.cur_loc = self.current_map.find_player()
+
 
         # --- Clean up any old buttons to avoid duplicates (safe getattr) ---
         for i in range(1, 5):
@@ -749,6 +809,8 @@ class Game():
                     else:
                         self.map.insert(tk.END, ch)
             game.time(self.btc)
+            self.cur_loc = self.current_map.find_player()
+            self.loc_sys.col_list_update(self.cur_loc)
             if int(self.current_map.get_player_terrain()) == 0:
                 self.output.insert(tk.END, f"You traveled for {self.btc:.0f} days and arrived in Plains.\n")
                 self.place = "Plains"
@@ -766,7 +828,7 @@ class Game():
             except Exception:
                 self.output.insert(tk.END, "Warning: failed to save map.\n")
         else: self.output.insert(tk.END, "To travel you will need to work for at least 1 hour a day\n")
-
+        self.loc_nr = int(self.current_map.get_player_terrain())
         self.output.yview(tk.END)
 
     def rdt1(self):
@@ -989,24 +1051,18 @@ class Game():
         self.output.yview(tk.END)
 
     def time(self, days=None):
-
-        new_days = days
-        game.cultivate(None, 2, days)
-        while new_days > 0:
-            new_days -= 1
-            self.day += 1
-            if self.day == 31:
-                self.month += 1
-                self.day = 1
-                if self.month == 13:
-                    self.month = 1
-                    self.year += 1
-        else:
-            self.date.config(text=f"{self.day}.{self.month}.{self.year} ")
-            self.output.yview(tk.END)
-
-    def dtime(self):  # for the 24-hour cycles
-        pass
+        self.day,self.month,self.year,self.cue,nhf = Timming.time(Timming(self.dct,self.bls,self.cue,self.second,self.minute,self.hour,self.day,self.month,self.year),days)
+        self.date.config(text=f"{self.day}.{self.month}.{self.year} ")
+        self.output.yview(tk.END)
+        self.kph.config(text=f"Cultivation Xp: \n{self.cue:.0f}")
+        if nhf is True:
+            self.output.insert(tk.END, f"To Cultivate you first need to decide how long you want to cultivate\n")
+        self.loc_sys.time_update(self.second,self.minute,self.hour, self.day, self.month, self.year,days*24*60*60)
+    def dtime(self,seconds):
+        self.second,self.minute,self.hour, self.day, self.month, self.year = Timming.dtime(Timming(self.dct, self.bls, self.cue, self.second, self.minute, self.hour, self.day, self.month, self.year),seconds)
+        print(f"{self.second,self.minute,self.hour}")
+        self.date.config(text=f"{self.day}.{self.month}.{self.year} ")
+        self.loc_sys.time_update(self.second,self.minute,self.hour, self.day, self.month, self.year,seconds)
 
     def time_manager(self):  # for time managment system #no idea how i will get this to work
         self.time_manager_overlay = tk.Toplevel(self.root)
@@ -1034,7 +1090,7 @@ class Game():
                 pady=6, width=8
 
             )
-            btn.place(x=100 + i * 110, y=10, )
+            btn.place(x=50 + i * 110, y=10, )
             self.group_buttons.append(btn)
 
             #i give up from here on onwards is danger expect for the close def thats great.
@@ -1055,9 +1111,8 @@ class Game():
         self.select_group(self.selected_group)
 
     def close_time_manager(self):
-        print(self.dft,self.dsn)
-        if self.dft > 0 or self.dsn > 0:
-            self.output.insert(tk.END, f"You need 2 hours of free time a day as well as 6 hours of sleep a day\n")
+        if self.dea <= 1 or self.dsn > 0:
+            self.output.insert(tk.END, f"You need 2 hour a day to eat as well as 6 hours of sleep a day\n")
         else:
             self.time_manager_overlay.grab_release()
             self.time_manager_overlay.destroy()
@@ -1093,6 +1148,7 @@ class Game():
                 self.dwt = 0
                 self.dft = 2
                 self.dsn = 6
+                self.dea = 0
                 for i in range(24):
 
                     x1 = start_x + i * hour_w
@@ -1131,6 +1187,8 @@ class Game():
                         self.dft -= 1
                     elif hpd == 3:
                         self.dsn -= 1
+                    elif hpd == 4:
+                        self.dea += 1
 
     def _redraw(self):
                 # redraw on resize
