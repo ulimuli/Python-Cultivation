@@ -2,11 +2,12 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 
+
 #maybe use a notebook tkk widget for better looks?
 
 
 class Inv_system:
-    def __init__(self, parent, Items, coins):
+    def __init__(self):
         self.Inv_Groups = [
             {"name": "Everything"},
             {"name": "Equipment"},
@@ -17,10 +18,15 @@ class Inv_system:
             {"name": "Artifacts"},
             {"name": "others"}
         ]
-        self.Items = Items
-        self.coins = coins
+        self.Items = None
+        self.coins = None
+
+    def create_ui(self, parent, item, coins):
         self.parent = parent
-        self.canvas = tk.Canvas(parent)
+        self.Items = item
+        self.coins = coins
+
+        self.canvas = tk.Canvas(self.parent)
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.inv_canvas = tk.Canvas(
             self.canvas,
@@ -128,13 +134,29 @@ class Inv_system:
                     )
                     list_start_y += list_gab_y
 
-    def count_item(self,name,amount=-1):
-        for item in self.Items:
+    def count_item(self,seller,buyer, name, amount=0, seller_coins=0, buyer_coins=0 ):
+        message = ""
+        for item in seller:
             if item["item"] == name:
-                print(item["amount"])
-                item["amount"] += amount
-                print(item["amount"])
-                self.inv_cat(self.selected_category)
+                if amount is None:
+                    amount = item["amount"]
+                if item["value"]*amount <= buyer_coins:
+                    item["amount"] -= amount
+                    buyer_coins -= item["value"]*amount
+                    seller_coins += item["value"]*amount
+                    for d in buyer:
+                        if d["item"] == name:
+                            d["amount"] += amount
+                            break
+                    else:
+                        new_item_add = item.copy()
+                        new_item_add["amount"] = amount
+                        buyer.append(new_item_add)
+                    message = "Transaction complete\n"
+                else:
+                    message = "The Buyer does not have enough coins to buy this Item\n"
+
+        return seller,buyer,seller_coins,buyer_coins,message
 
     def close_inv(self):
         self.canvas.grab_release()

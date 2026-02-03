@@ -242,9 +242,7 @@ class Game():
         self.but4 = tk.Button(self.root, height=2, width=4, text="Time", command=lambda: game.time_manager())
         self.but4.place(x=629, y=40)
 
-        self.but5 = tk.Button(self.root, height=2, width=4, text="Inventory",
-                              command=lambda: Inv_system(self.root,self.user_items,self.coins)
-                              )
+        self.but5 = tk.Button(self.root, height=2, width=4, text="Inventory",command=lambda: game.inventory())
         self.but5.place(x=559, y=80)
 
         self.but6 = tk.Button(self.root, height=2, width=4, text="Ascension", command=game.realms)
@@ -340,6 +338,8 @@ class Game():
                                    " The air is filled with Qi, an unseen force that allows you to cultivate.\n")
         self.output.insert(tk.END, "\n")
         self.output.insert(tk.END, "What is your name in this vast world\n")
+
+        self.inv = Inv_system()
 
         self.loc_sys = Loc_sys(self.root, self.place, self.loc_nr, self.dct, self.bls, self.cue,
                                self.second,
@@ -668,16 +668,10 @@ class Game():
         self.output.yview(tk.END)
 
     def loc(self):
-        if self.cur_loc is None:
-            self.travel()
-            self.loc_sys.col_list_update(self.cur_loc)
+        self.loc_sys.update_place(self.place)
+        self.loc_sys.col_list_update(self.cur_loc)
         self.loc_sys.create_ui()
-        self.loc_sys.time_update()
         self.loc_sys.workplace(dwt=self.dwt)
-
-
-
-
 
 
         #self.output.insert(tk.END, f"As you are in a {self.place} you are able to do:\n")
@@ -739,6 +733,7 @@ class Game():
                         self.map.insert(tk.END, ch)
                 self.map.insert(tk.END, "\n")
 
+            self.cur_loc = self.current_map.find_player()
             self.starting_map_token = 0
         else:
 
@@ -792,6 +787,8 @@ class Game():
         # If we get here, wmove is not None so perform the move
 
         # --- If a movement (wmove) was provided, perform it ---
+
+
         if wmove is not None and self.btc > 0:
             move_result = self.current_map.move_player(wmove)
 
@@ -809,26 +806,29 @@ class Game():
                     else:
                         self.map.insert(tk.END, ch)
             game.time(self.btc)
+
             self.cur_loc = self.current_map.find_player()
-            self.loc_sys.col_list_update(self.cur_loc)
-            if int(self.current_map.get_player_terrain()) == 0:
-                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} days and arrived in Plains.\n")
-                self.place = "Plains"
-            elif int(self.current_map.get_player_terrain()) == 1:
-                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a Forrest.\n")
-                self.place = "Forest"
-            elif int(self.current_map.get_player_terrain()) == 2:
-                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a City.\n")
-                self.place = "City"
-            elif int(self.current_map.get_player_terrain()) == 3:
-                self.output.insert(tk.END, f"You traveled for 5 days and should not be able to be here.\n")
-                self.place = "???"
+
             try:
                 self.current_map.save_map("Main_Map.txt")
             except Exception:
                 self.output.insert(tk.END, "Warning: failed to save map.\n")
         else: self.output.insert(tk.END, "To travel you will need to work for at least 1 hour a day\n")
         self.loc_nr = int(self.current_map.get_player_terrain())
+
+        if int(self.current_map.get_player_terrain()) == 0:
+            self.output.insert(tk.END, f"You traveled for {self.btc:.0f} days and arrived in Plains.\n")
+            self.place = "Plains"
+        elif int(self.current_map.get_player_terrain()) == 1:
+            self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a Forrest.\n")
+            self.place = "Forest"
+        elif int(self.current_map.get_player_terrain()) == 2:
+            self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a City.\n")
+            self.place = "City"
+        elif int(self.current_map.get_player_terrain()) == 3:
+            self.output.insert(tk.END, f"You traveled for 5 days and should not be able to be here.\n")
+            self.place = "???"
+
         self.output.yview(tk.END)
 
     def rdt1(self):
@@ -1009,6 +1009,9 @@ class Game():
                         print("")
                         print("I hope you liked my game")
                         break
+
+    def inventory(self):
+        self.inv.create_ui(self.root,self.user_items,self.coins)
 
     def cultivate(self, t, c, days):
 

@@ -1,8 +1,9 @@
 #alr so trade with local tribes clans and such, gathering of local resources, work system, maybe a clan sect system thingy
+import copy
 import random
 import tkinter as tk
 from tkinter import ttk
-from Time import Timming
+from Inventory_System import Inv_system
 
 
 class Loc_sys:
@@ -56,8 +57,93 @@ class Loc_sys:
             {"name": "Primordial Fang Savage Tribe"},
         ]
 
+        self.collection_traits = [ #traits currently copeid from ai will change that once i give each attributes
+
+            # 🌍 Attitude toward outsiders
+            "welcomes_outsiders",
+            "distrusts_outsiders",
+            "hostile_to_outsiders",
+            "isolationist_sect",
+            "allows_outsiders_on_trial",
+
+            # 🤝 Trade & interaction
+            "likes_trading",
+            "trade_neutral",
+            "refuses_trade",
+            "controls_trade_strictly",
+            "black_market_tolerant",
+
+            # 🏯 Culture & values
+            "honors_ancestors",
+            "values_strength",
+            "values_enlightenment",
+            "values_wealth",
+            "values_merit",
+            "values_bloodline",
+            "values_seniority",
+
+            # ⚔️ Conflict & violence
+            "quick_to_take_offense",
+            "vengeance_oriented",
+            "honor_bound",
+            "avoids_open_conflict",
+            "prefers_duels",
+            "collective_punishment",
+
+            # 🧘 Cultivation philosophy
+            "orthodox_cultivation",
+            "demonic_cultivation",
+            "balanced_yin_yang",
+            "body_refinement_focused",
+            "soul_cultivation_focused",
+            "artifact_reliant",
+            "pill_dependent",
+
+            # 🧠 Knowledge & secrecy
+            "guards_techniques",
+            "shares_knowledge_selectively",
+            "open_teachings",
+            "hoards_manuals",
+            "tests_disciples_harshly",
+
+            # 👥 Social structure
+            "sect_over_family",
+            "family_over_sect",
+            "elder_rule",
+            "patriarch_rule",
+            "council_rule",
+
+            # 🌱 Growth & recruitment
+            "recruits_mortals",
+            "recruits_only_clan",
+            "steals_disciples",
+            "adopts_orphans",
+            "talent_obsessed",
+
+            # 🌑 Morality & reputation
+            "ruthless_methods",
+            "benevolent_reputation",
+            "neutral_alignment",
+            "feared_by_neighbors",
+            "respected_by_neighbors",
+
+            # 🏔️ Environment & lifestyle
+            "mountain_secluded",
+            "urban_sect",
+            "nomadic_cultivators",
+            "hidden_realm_dwelling",
+            "spirit_beast_friendly",
+
+            # ⚖️ Law & discipline
+            "strict_rules",
+            "lenient_rules",
+            "harsh_punishments",
+            "rehabilitative_justice",
+            "trial_by_strength"
+        ]
+
         self.locations = [
-            {"name": "Market Place","call": self.marketplace},
+            {"name": "Market Place","call": self.create_marketplace},
             {"name": "Local Inn","call": self.local_inn},
             {"name": "Workplace","call": self.workplace}
         ]
@@ -75,8 +161,9 @@ class Loc_sys:
 
         self.Items = items
         self.user_items = user_items
-        self.coins = coins
+        self.user_coins = coins
         self.dwt = dwt
+        self.inv = Inv_system()
     def create_ui(self):
         self.loc_location()
         self.parent.after_idle(self.collections_list)
@@ -129,11 +216,12 @@ class Loc_sys:
                               text=f"{self.hour}:{self.minute} and {self.second} seconds")
         self.ddate.place(x=300, y=30)
 
-        self.coin = tk.Label(self.canvas, text=f"Coins: {self.coins}")
+        self.coin = tk.Label(self.canvas, text=f"Coins: {self.user_coins}")
         self.coin.place(x=600, y=50)
 
 
     def time_update(self, nsec=0, nmin=0, nhour=0, nday=0, nmonth=0, nyear=0, pt=0):
+        print(f"please update time: {pt}")
         self.second = nsec
         self.minute = nmin
         self.hour = nhour
@@ -146,8 +234,8 @@ class Loc_sys:
             while wpt > 0:
                 self.ttm -= 1
                 wpt -= 1
-                if self.ttm <= 0:
-                    self.coins += self.pm
+                if self.ttm == 0:
+                    self.user_coins += self.pm
                     self.work()
         except: pass
 
@@ -211,12 +299,18 @@ class Loc_sys:
 
         self.logger.yview(tk.END)
 
-    def update_label(self):
-        pass
-        #self.ch_plc = self.selected_var.get()
-        #self.label_var.set(
-        #    f"You will need 1 hour to get to {self.selected_var.get()}:"
-        #)
+    def update_place(self,place):
+        self.place = place
+
+    def create_collections(self,c):
+        traits = random.randint(2,4)
+        col = {
+                "name": c["name"],
+                "Population": random.randint(50000,200000),
+                "Traits": random.sample(self.collection_traits, traits)
+        }
+        return col
+
 
     def collections_list(self):
         print(f"qssdf {self.place_coord}")
@@ -226,9 +320,11 @@ class Loc_sys:
             local_collections = random.randint(2, 4)
             col_chos = random.sample(self.local_tribes, local_collections)
 
-            self.tiles_col[self.place_coord] = [col.copy() for col in col_chos]
+            preset = [self.create_collections(c) for c in col_chos]
+            self.tiles_col[self.place_coord] = preset
+
         for col in self.tiles_col[self.place_coord]:
-            self.collection_list.insert(tk.END, col["name"])
+            self.collection_list.insert(tk.END,f"{col['name']}")
         print(self.tiles_col)
         self.logger.yview(tk.END)
     def loc_location(self):
@@ -236,40 +332,44 @@ class Loc_sys:
         for loc in self.locations:
             self.loc_locations.append(loc["name"])
 
-    def marketplace(self):
+    def create_marketplace(self):
         self.close_inv()
         self.create_ui()
-        x=300
-        y=110
+        x = 300
+        y = 110
 
-        self.trade_tree = ttk.Treeview(self.canvas,columns=("Value","Quantity"))
-        self.trade_tree.place(x=x,y=y)
+        self.trade_tree = ttk.Treeview(self.canvas, columns=("Value", "Quantity"))
+        self.trade_tree.place(x=x, y=y)
 
         trade_scroll = ttk.Scrollbar(self.canvas, orient="vertical", command=self.trade_tree.yview)
         self.trade_tree.config(yscrollcommand=trade_scroll.set)
-        trade_scroll.place(x=x + 365,y=y + 25,height=184)
+        trade_scroll.place(x=x + 365, y=y + 25, height=184)
         self.trade_tree.heading("#0", text="Item")
         self.trade_tree.heading("Value", text="Value")
-        self.trade_tree.column("Value",width=90)
+        self.trade_tree.column("Value", width=90)
         self.trade_tree.heading("Quantity", text="Quantity")
-        self.trade_tree.column("Quantity",width=90)
+        self.trade_tree.column("Quantity", width=90)
 
+        buy = ttk.Button(self.canvas, text="Buy", command=lambda: self.count_item(amount=1, g=True))
+        buyall = ttk.Button(self.canvas, text="Buy all", command=lambda: self.count_item(amount=None, g=True))
+        sell = ttk.Button(self.canvas, text="Sell", command=lambda: self.count_item(amount=1, g=False))
+        sellall = ttk.Button(self.canvas, text="Sell all", command=lambda: self.count_item(amount=None, g=False))
 
-        buy = ttk.Button(self.canvas,text="Buy",command=lambda: self.count_item(amount=1,g=True))
-        buyall = ttk.Button(self.canvas, text="Buy all", command=lambda: self.count_item(amount=-1,g=True))
-        sell = ttk.Button(self.canvas, text="Sell", command=lambda: self.count_item(amount=1,g=False))
-        sellall = ttk.Button(self.canvas, text="Sell all", command=lambda: self.count_item(amount=-1,g=False))
+        buy.place(x=x, y=80)
+        buyall.place(x=x + 100, y=80)
+        sell.place(x=x + 200, y=80)
+        sellall.place(x=x + 300, y=80)
 
-        buy.place(x=x,y=80)
-        buyall.place(x=x+100, y=80)
-        sell.place(x=x+200, y=80)
-        sellall.place(x=x+300, y=80)
+        self.seller(update=self.upds)
 
-
-
+        self.marketplace()
+    def marketplace(self):
+        try:
+            self.trade_tree.delete(0,tk.END)
+        except:pass
         seller = self.trade_tree.insert("",tk.END, text="Seller Inventory")
         user = self.trade_tree.insert("", tk.END, text="Your Inventory")
-        self.seller(update=self.upds)
+
 
         for cat in self.Inv_Groups:
             carts = self.trade_tree.insert(seller, tk.END, text=cat["name"])
@@ -288,11 +388,12 @@ class Loc_sys:
                         pass
                     else:
                         self.trade_tree.insert(cats,tk.END,text=i["item"],values=(i["value"],i["amount"]))
-        self.coin.config(text=f"Coins: {self.coins}")
+        self.coin.config(text=f"Coins: {self.user_coins}")
     def seller(self,update):
         if update is True:
             isa = self.place_nr #multipliyer
             voagfs = 10000#*isa  # value of all goods from seller
+            self.seller_coins = random.randint(2500,5000)
             self.seller_inf = []
 
             while voagfs >=0:
@@ -329,60 +430,41 @@ class Loc_sys:
 
 
     def work(self):
-        self.pm = self.dwt * 2
-        self.ttm =60*60*24 #time till money
-        self.coin.config(text=f"Coins: {self.coins}")
+        if self.cur_plc == "Workplace":
+            self.pm = self.dwt * 2
+            self.ttm =60*60*24 #time till money
+            self.coin.config(text=f"Coins: {self.user_coins}")
+        else: self.ttm = -1
 
-
-    def count_item(self,amount=0,g=False): #g = get/buy
+    def count_item(self, amount=0, g=False,): #g = get/buy
         curItem = self.trade_tree.focus()
         name = self.trade_tree.item(curItem)["text"]
         gtc = self.trade_tree.parent(curItem)
         wit = self.trade_tree.parent(gtc)
         wit_name = self.trade_tree.item(wit)["text"]
-        found = False
 
         if wit_name == "Seller Inventory":
-            wiyt = self.seller_inf
-        else: wiyt = self.user_items
-        if g is True:
-            for item in wiyt:
-                if item["item"] == name:
-                    if amount == -1:
-                        amount = item["amount"]
-                    if item["value"]*amount > self.coins:
-                        self.logger.insert(tk.END,f"You do not have enough Coins\n")
-                        return
-                    item["amount"] -= amount
-                    self.coins -= item["value"]*amount
-            for d in self.user_items:
-                if d["item"] == name:
-                    d["amount"] += amount
-                    found = True
-            if not found:
-                for s in self.Items:
-                    if s["item"] == name:
-                        ani = s.copy()
-                        ani["amount"] += amount
-                        self.user_items.append(ani)
+            seller = self.seller_inf
+            sel_coins = self.seller_coins
+            buyer = self.user_items
+            buy_coins = self.user_coins
         else:
-            for item in wiyt:
-                if item["item"] == name:
-                    if amount == -1:
-                        amount = item["amount"]
-                    item["amount"] -= amount
-                    self.coins += item["value"] * amount
-            for d in self.seller_inf:
-                if d["item"] == name:
-                    d["amount"] += amount
-                    found = True
-            if not found:
-                for s in self.Items:
-                    if s["item"] == name:
-                        ani = s.copy()
-                        ani["amount"] += amount
-                        self.user_items.append(ani)
-        print(f"Coins:{self.coins}")
+            seller = self.user_items
+            sel_coins = self.user_coins
+            buyer = self.seller_inf
+            buy_coins = self.seller_coins
+
+        seller,buyer,sel_coins,buy_coins,message = self.inv.count_item(seller,buyer,name,amount,sel_coins,buy_coins)
+        print(message,sel_coins,buy_coins)
+        if wit_name == "Seller Inventory":
+
+            self.seller_coins = sel_coins
+            self.user_coins = buy_coins
+        else:
+            self.user_coins = sel_coins
+            self.seller_coins = buy_coins
+
+        self.logger.insert(tk.END, f"{message}")
         self.marketplace()
 
 
