@@ -9,6 +9,7 @@ from Inventory_System import Inv_system
 class Loc_sys:
     def __init__(self, parent, place="Forrest", place_nr=1, dct=1, bls=1, cue=10, second=1,
                  minute=1, hour=1, day=1, month=1, year=1,items=None,user_items=None,coins=None,dwt=0):
+        self.ct = 0
         self.upds = True
         self.fmw = None
         self.ttt = 0
@@ -167,7 +168,7 @@ class Loc_sys:
     def create_ui(self):
         self.loc_location()
         self.parent.after_idle(self.collections_list)
-        self.canvas = tk.Canvas(self.parent, height=480, width=700, highlightthickness=0)
+        self.canvas = tk.Canvas(self.parent, height=490, width=700, highlightthickness=0)
         self.canvas.place(x=0, y=0)
 
         self.parent.bind("<Escape>", lambda e: self.close_inv())
@@ -190,7 +191,7 @@ class Loc_sys:
         ttk.Label(self.canvas, text=f"{self.collection}:", font=("Inter", 10, "bold")).place(x=10, y=100)
 
         self.logger = tk.Text(self.canvas, height=10, width=60, highlightthickness=0)
-        self.logger.place(x=250, y=330)
+        self.logger.place(x=250, y=340)
 
         self.collection_list = tk.Listbox(self.canvas, height=8)
         self.collection_list.place(y=120, x=10)
@@ -217,7 +218,10 @@ class Loc_sys:
         self.ddate.place(x=300, y=30)
 
         self.coin = tk.Label(self.canvas, text=f"Coins: {self.user_coins}")
-        self.coin.place(x=600, y=50)
+        self.coin.place(x=550, y=30)
+
+        self.acf = ttk.LabelFrame(self.canvas, width=420, height=270, )  # activity frame
+        self.acf.place(x=250, y=48)
 
 
     def time_update(self, nsec=0, nmin=0, nhour=0, nday=0, nmonth=0, nyear=0, pt=0):
@@ -229,15 +233,7 @@ class Loc_sys:
         self.month = nmonth
         self.year = nyear
 
-        try:
-            wpt = pt
-            while wpt > 0:
-                self.ttm -= 1
-                wpt -= 1
-                if self.ttm == 0:
-                    self.user_coins += self.pm
-                    self.work()
-        except: pass
+        self.work(pt)
 
         try:
             self.date.config(text=f"{self.day}.{self.month}.{self.year}")
@@ -333,15 +329,16 @@ class Loc_sys:
             self.loc_locations.append(loc["name"])
 
     def create_marketplace(self):
-        self.close_inv()
-        self.create_ui()
-        x = 300
-        y = 110
+        self.acf.destroy()
+        self.acf = ttk.LabelFrame(self.canvas, width=420, height=270, )  # activity frame
+        self.acf.place(x=250, y=48)
+        x = 15
+        y = 30
 
-        self.trade_tree = ttk.Treeview(self.canvas, columns=("Value", "Quantity"))
+        self.trade_tree = ttk.Treeview(self.acf, columns=("Value", "Quantity"))
         self.trade_tree.place(x=x, y=y)
 
-        trade_scroll = ttk.Scrollbar(self.canvas, orient="vertical", command=self.trade_tree.yview)
+        trade_scroll = ttk.Scrollbar(self.acf, orient="vertical", command=self.trade_tree.yview)
         self.trade_tree.config(yscrollcommand=trade_scroll.set)
         trade_scroll.place(x=x + 365, y=y + 25, height=184)
         self.trade_tree.heading("#0", text="Item")
@@ -350,23 +347,24 @@ class Loc_sys:
         self.trade_tree.heading("Quantity", text="Quantity")
         self.trade_tree.column("Quantity", width=90)
 
-        buy = ttk.Button(self.canvas, text="Buy", command=lambda: self.count_item(amount=1, g=True))
-        buyall = ttk.Button(self.canvas, text="Buy all", command=lambda: self.count_item(amount=None, g=True))
-        sell = ttk.Button(self.canvas, text="Sell", command=lambda: self.count_item(amount=1, g=False))
-        sellall = ttk.Button(self.canvas, text="Sell all", command=lambda: self.count_item(amount=None, g=False))
+        buy = ttk.Button(self.acf, text="Buy", command=lambda: self.count_item(amount=1, g=True))
+        buyall = ttk.Button(self.acf, text="Buy all", command=lambda: self.count_item(amount=None, g=True))
+        sell = ttk.Button(self.acf, text="Sell", command=lambda: self.count_item(amount=1, g=False))
+        sellall = ttk.Button(self.acf, text="Sell all", command=lambda: self.count_item(amount=None, g=False))
 
-        buy.place(x=x, y=80)
-        buyall.place(x=x + 100, y=80)
-        sell.place(x=x + 200, y=80)
-        sellall.place(x=x + 300, y=80)
+        buy.place(x=x, y=5)
+        buyall.place(x=x + 100, y=5)
+        sell.place(x=x + 200, y=5)
+        sellall.place(x=x + 300, y=5)
 
         self.seller(update=self.upds)
 
         self.marketplace()
     def marketplace(self):
         try:
-            self.trade_tree.delete(0,tk.END)
-        except:pass
+            self.trade_tree.delete(*self.trade_tree.get_children())
+            print("worked deleted trade tree")
+        except: print("did not delete the trade info")
         seller = self.trade_tree.insert("",tk.END, text="Seller Inventory")
         user = self.trade_tree.insert("", tk.END, text="Your Inventory")
 
@@ -416,10 +414,12 @@ class Loc_sys:
         print(self.cur_plc)
         if self.cur_plc == "Workplace":
 
-            self.close_inv()
-            self.create_ui()
-            ttk.Label(self.canvas,text="You can start working. You will be paid 2 Coins per hour.").place(x=300,y=100)
-            ttk.Button(self.canvas,text="Start Work",command=self.work).place(x=350,y=200)
+            self.acf.destroy()
+            self.acf = ttk.LabelFrame(self.canvas, width=420, height=270, )  # activity frame
+            self.acf.place(x=250, y=48)
+            ttk.Label(self.acf,text="You can start working. \nYou will be paid 2 Coins per hour.").place(x=50,y=100)
+
+            ttk.Button(self.acf,text="Start Work",command=lambda: self.work(ntime=None)).place(x=150,y=200)
 
         else:pass
 
@@ -429,12 +429,16 @@ class Loc_sys:
             self.dwt = dwt
 
 
-    def work(self):
+    def work(self,ntime):
+        if ntime is None:
+            self.logger.insert(tk.END, f"You started working\n")
         if self.cur_plc == "Workplace":
-            self.pm = self.dwt * 2
-            self.ttm =60*60*24 #time till money
+            self.ct = self.ct + ntime
+            while self.ct >= 60*60*24:
+                self.ct -= 60*60*24
+                self.user_coins += 2
             self.coin.config(text=f"Coins: {self.user_coins}")
-        else: self.ttm = -1
+
 
     def count_item(self, amount=0, g=False,): #g = get/buy
         curItem = self.trade_tree.focus()
