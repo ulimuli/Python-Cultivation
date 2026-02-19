@@ -8,7 +8,11 @@ from Inventory_System import Inv_system
 
 class Loc_sys:
     def __init__(self, parent, place="Forrest", place_nr=1, dct=1, bls=1, cue=10, second=1,
-                 minute=1, hour=1, day=1, month=1, year=1,items=None,user_items=None,coins=None,dwt=0):
+                 minute=1, hour=1, day=1, month=1, year=1,items=None,user_items=None,coins=None,dwt=None):
+        self.renting = None
+        self.ctr = 0
+        self.working = None
+        self.dtp = None
         self.ct = 0
         self.upds = True
         self.fmw = None
@@ -35,6 +39,7 @@ class Loc_sys:
         self.year = year  # till here main import stuff
         self.seconds = 0
         self.trv_r_time = 0
+        self.ttrf = 60*60*24*7
         self.local_tribes = [
             {"name": "Ashfang Totem Tribe"},
             {"name": "Bloodsun Hunter Clan", },
@@ -146,7 +151,7 @@ class Loc_sys:
         self.locations = [
             {"name": "Market Place","call": self.create_marketplace},
             {"name": "Local Inn","call": self.local_inn},
-            {"name": "Workplace","call": self.workplace}
+            {"name": "Workplace","call": self.workplace},
         ]
 
         self.Inv_Groups = [
@@ -175,11 +180,9 @@ class Loc_sys:
         exit_btn = tk.Button(self.canvas, text="X", command=lambda: self.close_inv())
         exit_btn.place(x=650, y=2)
 
-        self.canvas.create_text(
-            70,
-            50,
-            text=f"Location: {self.place}"
-        )
+        self.location = ttk.Label(self.canvas,text=f"Location: {self.place}")
+        self.location.place(x=10,y=40,)
+
         self.collection = "None"
         if self.place_nr <= 1:
             self.collection = "Local Tribes"
@@ -223,9 +226,15 @@ class Loc_sys:
         self.acf = ttk.LabelFrame(self.canvas, width=420, height=270, )  # activity frame
         self.acf.place(x=250, y=48)
 
+        for v in self.locations:
+            if v["name"] == self.cur_plc:
+                v["call"]()
 
     def time_update(self, nsec=0, nmin=0, nhour=0, nday=0, nmonth=0, nyear=0, pt=0):
-        print(f"please update time: {pt}")
+
+        self.work(pt,self.hour)
+        self.rent(pt, self.hour)
+
         self.second = nsec
         self.minute = nmin
         self.hour = nhour
@@ -233,7 +242,11 @@ class Loc_sys:
         self.month = nmonth
         self.year = nyear
 
-        self.work(pt)
+        try:
+            if pt >= self.ttrf:
+                self.seller()
+            else: self.ttrf -= pt
+        except: pass
 
         try:
             self.date.config(text=f"{self.day}.{self.month}.{self.year}")
@@ -243,14 +256,26 @@ class Loc_sys:
             nvfb = 100 - self.trv_r_time * 100 / self.ttt
             self.pb["value"] = nvfb
 
+
+
             if self.trv_r_time <= 0:
                 if self.fmw == 1:
                     self.cur_plc = self.ch_plc
+                    self.place = self.cur_plc
+                    self.location.config(text=f"Location: {self.place}")
                     for v in self.locations:
                         if v["name"] == self.cur_plc:
                             v["call"]()
                 elif self.fmw == 2:
                     self.cur_col = self.ch_col
+                    self.cur_plc = None
+
+                    self.acf.destroy()
+                    self.acf = ttk.LabelFrame(self.canvas, width=420, height=270, )  # activity frame
+                    self.acf.place(x=250, y=48)
+
+                    self.place = self.cur_col
+                    self.location.config(text=f"Location: {self.place}")
                 self.logger.insert(tk.END, f"You arrived\n")
                 self.ttt = 0
                 self.trv_r_time = 0
@@ -278,6 +303,7 @@ class Loc_sys:
             if self.ch_col == self.cur_col:
                 if self.ch_plc == self.cur_plc:
                     pass
+
                 else:
                     if self.ch_plc == "":
                         self.logger.insert(tk.END, f"Please first select a local Location\n")
@@ -293,10 +319,14 @@ class Loc_sys:
                 self.ttt = 60 * 60 * 5
                 self.fmw = 2
 
+
         self.logger.yview(tk.END)
 
     def update_place(self,place):
+        self.cur_plc = None
+        self.cur_col = None
         self.place = place
+        self.seller()
 
     def create_collections(self,c):
         traits = random.randint(2,4)
@@ -329,6 +359,7 @@ class Loc_sys:
             self.loc_locations.append(loc["name"])
 
     def create_marketplace(self):
+
         self.acf.destroy()
         self.acf = ttk.LabelFrame(self.canvas, width=420, height=270, )  # activity frame
         self.acf.place(x=250, y=48)
@@ -357,9 +388,10 @@ class Loc_sys:
         sell.place(x=x + 200, y=5)
         sellall.place(x=x + 300, y=5)
 
-        self.seller(update=self.upds)
-
         self.marketplace()
+
+
+
     def marketplace(self):
         try:
             self.trade_tree.delete(*self.trade_tree.get_children())
@@ -387,8 +419,8 @@ class Loc_sys:
                     else:
                         self.trade_tree.insert(cats,tk.END,text=i["item"],values=(i["value"],i["amount"]))
         self.coin.config(text=f"Coins: {self.user_coins}")
-    def seller(self,update):
-        if update is True:
+    def seller(self,):
+            self.ttrf = 60*60*24*7 #time till refresh
             isa = self.place_nr #multipliyer
             voagfs = 10000#*isa  # value of all goods from seller
             self.seller_coins = random.randint(2500,5000)
@@ -404,13 +436,48 @@ class Loc_sys:
                 else:
                     self.seller_inf.append(sfidk)
                 voagfs -= sfidk["value"]
-        else:pass
-        self.upds = False
 
 
     def local_inn(self):
-        pass
-    def workplace(self,dwt=None):
+        if self.cur_plc == "Local Inn":
+            self.acf.destroy()
+            self.acf = ttk.LabelFrame(self.canvas, width=420, height=270, )  # activity frame
+            self.acf.place(x=250, y=48)
+            ttk.Label(self.acf, text="You can rent a room. \nYou will be deducted 10 Coins per day.").place(x=50, y=100)
+
+            ttk.Button(self.acf, text="Start Renting", command=lambda: self.rent(ntime=None, renting=True)).place(x=100,
+                                                                                                               y=200)
+            ttk.Button(self.acf, text="Stop Renting", command=lambda: self.rent(ntime=None, renting=False)).place(x=210,
+                                                                                                              y=200)
+
+    def rent(self,ntime=0,hour=None,renting=None):
+        if renting is True:
+            self.renting = True
+        else:
+            if renting is False:
+                self.renting = False
+        print(f"Currently it is {hour} hour late and {ntime} seconds passed.")
+        if self.renting is True:
+            try:
+                if ntime is None:
+                    self.logger.insert(tk.END, f"You started renting\n")
+
+                self.ctr = self.ctr + ntime
+
+                while self.ctr >= 60*60*24:
+                    self.user_coins -= 10
+                    self.ctr -= 60 * 60*24
+            except: pass
+
+        else:
+            if ntime is None:
+                self.logger.insert(tk.END, f"You stopped renting\n")
+
+        try:
+            self.coin.config(text=f"Coins: {self.user_coins}")
+        except:
+            pass
+    def workplace(self,dtp=None): #Plan: Make like a board where jobs can be given out based on skill level or so. Bad thing is i do not have a skill system yet ... Also i will need to integrate the work hours from the Time Planner
         print(self.cur_plc)
         if self.cur_plc == "Workplace":
 
@@ -419,25 +486,45 @@ class Loc_sys:
             self.acf.place(x=250, y=48)
             ttk.Label(self.acf,text="You can start working. \nYou will be paid 2 Coins per hour.").place(x=50,y=100)
 
-            ttk.Button(self.acf,text="Start Work",command=lambda: self.work(ntime=None)).place(x=150,y=200)
+            ttk.Button(self.acf,text="Get a Job",command=lambda: self.work(ntime=None,working=True)).place(x=100,y=200)
+            ttk.Button(self.acf,text="Quit your Job",command=lambda: self.work(ntime=None,working=False)).place(x=210,y=200)
 
         else:pass
 
-        if dwt is None:
+        if dtp is None:
             pass
+        else: self.dtp = dtp
+
+
+    def work(self,ntime=0,hour=None,working=None):
+        if working is True:
+            self.working = True
         else:
-            self.dwt = dwt
+            if working is False:
+                self.working = False
+        print(f"Currently it is {hour} hour late and {ntime} seconds passed also here is the array {self.dtp}")
+        if self.working is True:
+            try:
+                if ntime is None:
+                    self.logger.insert(tk.END, f"You started working\n")
 
+                self.ct = self.ct + ntime
 
-    def work(self,ntime):
-        if ntime is None:
-            self.logger.insert(tk.END, f"You started working\n")
-        if self.cur_plc == "Workplace":
-            self.ct = self.ct + ntime
-            while self.ct >= 60*60*24:
-                self.ct -= 60*60*24
-                self.user_coins += 2
+                while self.ct >= 60 * 60:
+                    if self.dtp[hour] == 1:
+                        self.user_coins += 2
+                    self.ct -= 60 * 60
+                    hour = (hour + 1) % 24
+            except: pass
+
+        else:
+            if ntime is None:
+                self.logger.insert(tk.END, f"You stopped working\n")
+
+        try:
             self.coin.config(text=f"Coins: {self.user_coins}")
+        except:
+            pass
 
 
     def count_item(self, amount=0, g=False,): #g = get/buy

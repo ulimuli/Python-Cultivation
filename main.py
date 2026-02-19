@@ -328,22 +328,26 @@ class Game():
         self.root.bind_all("<s>", lambda e: self.travel(1, "down"))
         self.root.bind_all("<d>", lambda e: self.travel(1, "right"))
 
+        self.loc_sys = Loc_sys(self.root, self.place, self.loc_nr, self.dct, self.bls, self.cue,
+                               self.second,
+                               self.minute, self.hour, self.day, self.month, self.year, self.Items, self.user_items,
+                               self.coins, self.dwt)
+
         if self.starting_map_token == 1:
             game.travel(start_call=self.starting_map_token)
 
+        self.output.delete("1.0", "end")
+
         self.output.insert(tk.END, "Welcome to Python-Cultivation!\n")
+        #self.output.insert(tk.END, "\n")
+        #self.output.insert(tk.END, "You open your eyes to a world with vast towering mountains,"
+                                   #" their peaks covered in mist, stretch endlessly into the heavens."
+                                   #" The air is filled with Qi, an unseen force that allows you to cultivate.\n")
         self.output.insert(tk.END, "\n")
-        self.output.insert(tk.END, "You open your eyes to a world with vast towering mountains,"
-                                   " their peaks covered in mist, stretch endlessly into the heavens."
-                                   " The air is filled with Qi, an unseen force that allows you to cultivate.\n")
-        self.output.insert(tk.END, "\n")
+        #I think the welcome text does not fit anymore as there are currently not really mountains in the game yet
         self.output.insert(tk.END, "What is your name in this vast world\n")
 
         self.inv = Inv_system()
-
-        self.loc_sys = Loc_sys(self.root, self.place, self.loc_nr, self.dct, self.bls, self.cue,
-                               self.second,
-                               self.minute, self.hour, self.day, self.month, self.year,self.Items,self.user_items,self.coins,self.dwt)
 
         self.root.mainloop()
 
@@ -668,10 +672,9 @@ class Game():
         self.output.yview(tk.END)
 
     def loc(self):
-        self.loc_sys.update_place(self.place)
         self.loc_sys.col_list_update(self.cur_loc)
         self.loc_sys.create_ui()
-        self.loc_sys.workplace(dwt=self.dwt)
+        self.loc_sys.workplace(dtp=self.hours)
 
 
         #self.output.insert(tk.END, f"As you are in a {self.place} you are able to do:\n")
@@ -733,7 +736,16 @@ class Game():
                         self.map.insert(tk.END, ch)
                 self.map.insert(tk.END, "\n")
 
-            self.cur_loc = self.current_map.find_player()
+            if int(self.current_map.get_player_terrain()) == 0:
+                self.place = "Plains"
+            elif int(self.current_map.get_player_terrain()) == 1:
+                self.place = "Forest"
+            elif int(self.current_map.get_player_terrain()) == 2:
+                self.place = "City"
+            elif int(self.current_map.get_player_terrain()) == 3:
+                self.place = "???"
+            self.loc_sys.update_place(self.place)
+
             self.starting_map_token = 0
         else:
 
@@ -813,21 +825,24 @@ class Game():
                 self.current_map.save_map("Main_Map.txt")
             except Exception:
                 self.output.insert(tk.END, "Warning: failed to save map.\n")
-        else: self.output.insert(tk.END, "To travel you will need to work for at least 1 hour a day\n")
-        self.loc_nr = int(self.current_map.get_player_terrain())
 
-        if int(self.current_map.get_player_terrain()) == 0:
-            self.output.insert(tk.END, f"You traveled for {self.btc:.0f} days and arrived in Plains.\n")
-            self.place = "Plains"
-        elif int(self.current_map.get_player_terrain()) == 1:
-            self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a Forrest.\n")
-            self.place = "Forest"
-        elif int(self.current_map.get_player_terrain()) == 2:
-            self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a City.\n")
-            self.place = "City"
-        elif int(self.current_map.get_player_terrain()) == 3:
-            self.output.insert(tk.END, f"You traveled for 5 days and should not be able to be here.\n")
-            self.place = "???"
+            self.loc_nr = int(self.current_map.get_player_terrain())
+
+            if int(self.current_map.get_player_terrain()) == 0:
+                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} days and arrived in Plains.\n")
+                self.place = "Plains"
+            elif int(self.current_map.get_player_terrain()) == 1:
+                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a Forrest.\n")
+                self.place = "Forest"
+            elif int(self.current_map.get_player_terrain()) == 2:
+                self.output.insert(tk.END, f"You traveled for {self.btc:.0f} and arrived in a City.\n")
+                self.place = "City"
+            elif int(self.current_map.get_player_terrain()) == 3:
+                self.output.insert(tk.END, f"You traveled for 5 days and should not be able to be here.\n")
+                self.place = "???"
+            self.loc_sys.update_place(self.place)
+
+        else: self.output.insert(tk.END, "To travel you will need to work for at least 1 hour a day\n")
 
         self.output.yview(tk.END)
 
@@ -1192,6 +1207,7 @@ class Game():
                         self.dsn -= 1
                     elif hpd == 4:
                         self.dea += 1
+                print(self.hours)
 
     def _redraw(self):
                 # redraw on resize
